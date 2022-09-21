@@ -1,0 +1,318 @@
+<?xml version="1.0"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.0-0-g9aa0fdb  Build Version: 1.5.7004.21443
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="xju" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find xju_simu)/urdf/xju_model.gazebo.xacro"/>
+  <xacro:include filename="$(find xju_simu)/urdf/common_properties.xacro"/>
+
+  <!-- Body -->
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="5" />
+      <inertia
+        ixx="0.13"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.21"
+        iyz="0.0"
+        izz="0.13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0.1 0 0.25"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.4 0.39 0.5" />
+      </geometry>
+      <material name="orange" />
+    </visual>
+    <collision>
+      <origin
+        xyz="0.1 0 0.25"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.4 0.3 0.5" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Wheel -->
+  <link
+    name="universal_wheel_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.5" />
+      <inertia
+        ixx="9.4792E-5"
+        ixy="0"
+        ixz="0"
+        iyy="1.5625E-4"
+        iyz="0"
+        izz="9.4792E-5" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.02" radius="0.025" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.02" radius="0.025" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_uw"
+    type="continuous">
+    <origin
+      xyz="0.2 0 -0.01"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="universal_wheel_link" />
+    <axis
+      xyz="0 0 1" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link
+    name="front_wheel_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.5" />
+      <inertia
+        ixx="9.4792E-5"
+        ixy="0"
+        ixz="0"
+        iyy="1.5625E-4"
+        iyz="0"
+        izz="9.4792E-5" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <cylinder length="0.02" radius="0.025" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <cylinder length="0.02" radius="0.025" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_fw"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.035"
+      rpy="0 0 0" />
+    <parent
+      link="universal_wheel_link" />
+    <child
+      link="front_wheel_link" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link
+    name="left_wheel_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="2" />
+      <inertia
+        ixx="0.002867"
+        ixy="0"
+        ixz="0"
+        iyy="0.0049"
+        iyz="0"
+        izz="0.002867" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <cylinder length="0.05" radius="0.07" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <cylinder length="0.05" radius="0.07" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_lw"
+    type="continuous">
+    <origin
+      xyz="0 0.175 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_wheel_link" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link
+    name="right_wheel_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="2" />
+      <inertia
+        ixx="0.002867"
+        ixy="0"
+        ixz="0"
+        iyy="0.0049"
+        iyz="0"
+        izz="0.002867" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <cylinder length="0.05" radius="0.07" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <cylinder length="0.05" radius="0.07" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_rw"
+    type="continuous">
+    <origin
+      xyz="0 -0.175 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_wheel_link" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <!-- Imu -->
+  <link name="imu_link"/>
+  <joint
+    name="joint_imu"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="imu_link" />
+    <axis
+      xyz="0 0 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <!-- Lidar -->
+  <link name="laser_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.02" radius="0.01" />
+      </geometry>
+      <material name="red" />
+    </visual>
+  </link>
+  <joint
+    name="joint_ladar"
+    type="fixed">
+    <origin
+      xyz="0.29 0 -0.01"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="laser_link" />
+    <axis
+      xyz="0 0 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+  
+  <!-- Camera -->
+  <link name="camera_front_base">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.04 0.01" />
+      </geometry>
+      <material name="red" />
+    </visual>
+  </link>
+  <joint name="camera_front_base_joint" type="fixed">
+    <axis xyz="0 0 0" />
+    <origin xyz="0.305 0 0.495" rpy="0 0.174 0"/>
+    <parent link="base_link"/>
+    <child link="camera_front_base"/>
+  </joint>
+  <link name="camera_front_link" />
+  <joint name="camera_front_joint" type="fixed">
+    <axis xyz="0 0 0" />
+    <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
+    <parent link="camera_front_base"/>
+    <child link="camera_front_link"/>
+  </joint>
+</robot>
