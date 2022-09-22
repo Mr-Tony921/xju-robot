@@ -1,0 +1,11 @@
+float32 linear_control #线速度指令
+float32 linear_feedback #线速度反馈
+float32 angular_control #角速度指令
+float32 angular_feedback #角速度反馈
+float32 lwheel_control #左轮转速指令
+float32 lwheel_feedback #左轮转速反馈
+float32 lwheel_acc #左轮加速度
+float32 rwheel_control #右轮转速指令
+float32 rwheel_feedback #右轮转速反馈
+float32 rwheel_acc #右轮加速度
+xjupose odom_pose #odom位置

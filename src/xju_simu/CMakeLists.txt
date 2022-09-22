@@ -2,13 +2,24 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(xju_simu)
 
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+		message_generation
+		message_runtime
+		roscpp
+		roslaunch
+		)
 
-catkin_package()
+add_message_files(FILES
+		xjupose.msg
+		fusion_analysis.msg
+		)
 
-find_package(roslaunch)
+generate_messages()
 
-foreach(dir launch rviz teleop urdf worlds)
-	install(DIRECTORY ${dir}/
-		DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
-endforeach(dir)
+catkin_package(CATKIN_DEPENDS message_generation message_runtime roscpp)
+
+include_directories(include ${catkin_INCLUDE_DIRS})
+
+add_executable(xju_bridge_node node/xju_bridge_node.cpp src/xju_bridge.cpp)
+add_dependencies(xju_bridge_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(xju_bridge_node ${catkin_LIBRARIES})

@@ -2,6 +2,7 @@ build/
 devel/
 install/
 thirdparty/
+*/cmake-build-debug/
 .idea/
 *.bag
 *.bin

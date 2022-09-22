@@ -24,4 +24,6 @@
 
   <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"
         args="-urdf -model sunny -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+
+  <!--node pkg="xju_simu" type="xju_bridge_node" name="xju_bridge" /-->
 </launch>

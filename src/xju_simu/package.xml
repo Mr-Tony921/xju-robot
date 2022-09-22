@@ -10,11 +10,14 @@ for xju robot</p>
   <maintainer email="tongronglei@163.com" />
   <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>roslaunch</depend>
-  <depend>robot_state_publisher</depend>
-  <depend>rviz</depend>
-  <depend>joint_state_publisher</depend>
   <depend>gazebo</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>roscpp</depend>
+  <depend>roslaunch</depend>
+  <depend>rviz</depend>
   <export>
     <architecture_independent />
   </export>
