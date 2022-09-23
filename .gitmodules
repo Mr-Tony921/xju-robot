@@ -1,0 +1,12 @@
+[submodule "src/thirdparty/gmapping"]
+	path = src/thirdparty/gmapping
+	url = https://github.com/ros-perception/slam_gmapping.git
+	branch = melodic-devel
+[submodule "src/thirdparty/openslam_gmapping"]
+        path = src/thirdparty/openslam_gmapping
+        url = https://github.com/ros-perception/openslam_gmapping.git
+        branch = melodic-devel
+[submodule "src/thirdparty/navigation"]
+	path = src/thirdparty/navigation
+	url = https://github.com/ros-planning/navigation.git
+	branch = melodic-devel
