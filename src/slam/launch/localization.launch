@@ -1,0 +1,6 @@
+<launch>
+    <arg name="map" default="$(find xju_slam)/../../map/simple.yaml"/>
+    <param name="use_sim_time" value="true"/>
+    <node pkg="map_server" type="map_server" name="map_server" args="$(arg map)"/>
+    <include file="$(find xju_slam)/launch/amcl_diff.launch"/>
+</launch>
