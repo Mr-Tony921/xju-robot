@@ -3,4 +3,5 @@
     <param name="use_sim_time" value="true"/>
     <node pkg="map_server" type="map_server" name="map_server" args="$(arg map)"/>
     <include file="$(find xju_slam)/launch/amcl_diff.launch"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_slam)/rviz/slam.rviz" />
 </launch>
