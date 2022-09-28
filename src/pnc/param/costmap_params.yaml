@@ -1,0 +1,63 @@
+global_costmap:
+  plugins:
+    - { name: static_layer,    type: "costmap_2d::StaticLayer" }
+    - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
+    - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
+
+  track_unknown_space: false
+  global_frame: map
+  robot_base_frame: base_link
+  map_type: costmap
+  footprint: [[0.3, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.3, -0.2]]
+  footprint_padding: 0.1
+
+  update_frequency: 4.0
+  publish_frequency: 4.0
+  transform_tolerance: 0.5
+
+  static_map: true
+  always_send_full_costmap: false
+  resolution: 0.05
+
+  static_layer:
+    map_topic: /map
+    track_unknown_space: false
+
+  obstacle_layer:
+    observation_sources: scan
+    scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5 }
+    track_unknown_space: false
+
+  inflation_layer:
+    inflation_radius: 1.0
+    cost_scaling_factor: 2.61
+
+local_costmap:
+  plugins:
+    - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
+    - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
+
+  global_frame: odom
+  robot_base_frame: base_link
+  map_type: costmap
+  footprint: [[0.3, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.3, -0.2]]
+  footprint_padding: 0.0
+
+  update_frequency: 10.0
+  publish_frequency: 4.0
+  transform_tolerance: 0.5
+
+  static_map: false
+  rolling_window: true
+  width: 6
+  height: 6
+  resolution: 0.05
+
+  obstacle_layer:
+    observation_sources: scan
+    scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5 }
+    track_unknown_space: false
+
+  inflation_layer:
+    inflation_radius: 1.0
+    cost_scaling_factor: 2.61
