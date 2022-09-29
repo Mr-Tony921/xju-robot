@@ -3,6 +3,13 @@
   <arg name="cmd_vel_topic" default="/cmd_vel" />
   <arg name="odom_topic" default="odom" />
   <arg name="move_forward_only" default="false"/>
+  <arg name="localization_rviz" default="false"/>
+  <arg name="pnc_rviz" default="true"/>
+
+  <!-- amcl -->
+  <include file="$(find xju_slam)/launch/localization.launch">
+    <arg name="rviz" value="$(arg localization_rviz)" />
+  </include>
 
   <!-- move_base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -14,4 +21,9 @@
     <remap from="odom" to="$(arg odom_topic)"/>
     <param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
   </node>
+
+  <!-- rviz -->
+  <group if="$(arg pnc_rviz)">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_pnc)/rviz/pnc.rviz" />
+  </group>
 </launch>

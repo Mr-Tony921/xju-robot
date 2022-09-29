@@ -9,10 +9,10 @@ global_costmap:
   robot_base_frame: base_link
   map_type: costmap
   footprint: [[0.3, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.3, -0.2]]
-  footprint_padding: 0.1
+  footprint_padding: 0.05
 
-  update_frequency: 4.0
-  publish_frequency: 4.0
+  update_frequency: 2.0
+  publish_frequency: 1.0
   transform_tolerance: 0.5
 
   static_map: true
@@ -25,7 +25,7 @@ global_costmap:
 
   obstacle_layer:
     observation_sources: scan
-    scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5 }
+    scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true, min_obstacle_height: -1.0 }
     track_unknown_space: false
 
   inflation_layer:
@@ -43,8 +43,8 @@ local_costmap:
   footprint: [[0.3, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.3, -0.2]]
   footprint_padding: 0.0
 
-  update_frequency: 10.0
-  publish_frequency: 4.0
+  update_frequency: 3.0
+  publish_frequency: 1.0
   transform_tolerance: 0.5
 
   static_map: false
@@ -55,7 +55,7 @@ local_costmap:
 
   obstacle_layer:
     observation_sources: scan
-    scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5 }
+    scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true }
     track_unknown_space: false
 
   inflation_layer:

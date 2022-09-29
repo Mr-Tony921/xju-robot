@@ -43,7 +43,7 @@
       <publishTf>true</publishTf>
       <publishWheelJointState>true</publishWheelJointState>
       <legacyMode>false</legacyMode>
-      <updateRate>10</updateRate>
+      <updateRate>50</updateRate>
       <leftJoint>joint_lw</leftJoint>
       <rightJoint>joint_rw</rightJoint>
       <wheelSeparation>0.35</wheelSeparation>
@@ -62,7 +62,7 @@
       <topicName>imu</topicName>
       <serviceName>imu_service</serviceName>
       <gaussianNoise>0.0</gaussianNoise>
-      <updateRate>100</updateRate>
+      <updateRate>50</updateRate>
       <imu>
         <noise>
           <type>gaussian</type>
