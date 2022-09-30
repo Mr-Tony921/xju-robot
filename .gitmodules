@@ -10,3 +10,15 @@
 	path = src/thirdparty/navigation
 	url = https://github.com/ros-planning/navigation.git
 	branch = melodic-devel
+[submodule "src/thirdparty/teb_local_planner"]
+	path = src/thirdparty/teb_local_planner
+	url = https://github.com/rst-tu-dortmund/teb_local_planner.git
+	branch = melodic-devel
+[submodule "src/thirdparty/costmap_converter"]
+	path = src/thirdparty/costmap_converter
+	url = https://github.com/rst-tu-dortmund/costmap_converter.git
+	branch = master
+[submodule "src/thirdparty/move_base_flex"]
+	path = src/thirdparty/move_base_flex
+	url = https://github.com/magazino/move_base_flex.git
+	branch = melodic
