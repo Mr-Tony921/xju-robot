@@ -7,6 +7,10 @@
     <material>Gazebo/Orange</material>
   </gazebo>
 
+  <gazebo reference="pic_link">
+    <material>Gazebo/face</material>
+  </gazebo>
+
   <gazebo reference="universal_wheel_link">
     <material>Gazebo/Black</material>
   </gazebo>

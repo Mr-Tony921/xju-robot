@@ -87,11 +87,7 @@ Visualization Manager:
           Marker Topic: /move_base/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
-            InfeasibleRobotPoses: true
-            LineObstacles: true
-            PointObstacles: true
-            RobotFootprintModel: true
-            TebContainer: true
+            {}
           Queue Size: 100
           Value: true
         - Alpha: 1
@@ -245,6 +241,8 @@ Visualization Manager:
               Value: true
             odom:
               Value: true
+            pic_link:
+              Value: false
             right_wheel_link:
               Value: true
             universal_wheel_link:
@@ -266,6 +264,8 @@ Visualization Manager:
                   laser_link:
                     {}
                   left_wheel_link:
+                    {}
+                  pic_link:
                     {}
                   right_wheel_link:
                     {}
@@ -375,4 +375,4 @@ Window Geometry:
     collapsed: true
   Width: 1215
   X: 530
-  Y: 13
+  Y: 0

@@ -43,6 +43,31 @@
     </collision>
   </link>
 
+  <!-- Picture -->
+  <link
+    name="pic_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.4 0.39 0.001" />
+      </geometry>
+      <material name="orange" />
+    </visual>
+  </link>
+  <joint
+    name="joint_pic"
+    type="fixed">
+    <origin
+      xyz="0.1 0.0 0.5"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="pic_link" />
+  </joint>
+
   <!-- Wheel -->
   <link
     name="universal_wheel_link">

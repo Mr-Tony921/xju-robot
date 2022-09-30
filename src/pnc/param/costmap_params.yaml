@@ -8,7 +8,7 @@ global_costmap:
   global_frame: map
   robot_base_frame: base_link
   map_type: costmap
-  footprint: [[0.3, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.3, -0.2]]
+  footprint: [[0.3, 0.15], [0.25, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.25, -0.2], [0.3, -0.15]]
   footprint_padding: 0.05
 
   update_frequency: 2.0
@@ -41,7 +41,7 @@ local_costmap:
   global_frame: odom
   robot_base_frame: base_link
   map_type: costmap
-  footprint: [[0.3, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.3, -0.2]]
+  footprint: [[0.3, 0.15], [0.25, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.25, -0.2], [0.3, -0.15]]
   footprint_padding: 0.0
 
   update_frequency: 5.0
