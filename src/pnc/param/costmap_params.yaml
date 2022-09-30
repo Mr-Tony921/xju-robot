@@ -43,7 +43,7 @@ local_costmap:
   footprint: [[0.3, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.3, -0.2]]
   footprint_padding: 0.0
 
-  update_frequency: 3.0
+  update_frequency: 5.0
   publish_frequency: 1.0
   transform_tolerance: 0.5
 
