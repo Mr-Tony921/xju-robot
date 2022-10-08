@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>xju_explore</name>
+  <version>0.0.1</version>
+
+  <description>xju robot exploration.</description>
+
+  <author>TODO</author>
+  <maintainer email="tongronglei@163.com" />
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>move_base_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>map_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>tf</depend>
+  <depend>costmap_2d</depend>
+  <depend>actionlib</depend>
+  <depend>opencv2</depend>
+  <depend>cv_bridge</depend>
+</package>
