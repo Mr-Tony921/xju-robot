@@ -6,3 +6,7 @@ controller_patience: 15.0
 conservative_reset_dist: 3.0
 oscillation_timeout: 10.0
 oscillation_distance: 0.2
+base_global_planner: global_planner/GlobalPlanner
+base_local_planner: teb_local_planner/TebLocalPlannerROS
+recovery_behaviors:
+  - {name: conservative_reset, type: clear_costmap_recovery/ClearCostmapRecovery}

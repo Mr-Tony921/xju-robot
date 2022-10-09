@@ -3,7 +3,7 @@ local_costmap:
     - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
     - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
 
-  global_frame: map
+  global_frame: odom
   robot_base_frame: base_link
   map_type: costmap
   footprint: [[0.3, 0.15], [0.25, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.25, -0.2], [0.3, -0.15]]

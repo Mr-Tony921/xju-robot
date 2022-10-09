@@ -16,7 +16,7 @@
 
 namespace xju::explore {
 constexpr static const char* NODE_NAME = "xju_explore";
-constexpr static const double ANGULAR_SPEED = 0.2;
+constexpr static const double ANGULAR_SPEED = 0.3;
 constexpr static const double CONTROL_FREQ = 5.0;
 constexpr static const double WAIT_TIMEOUT = 10.0;
 constexpr static const double DIST_RESO = 2.0;
@@ -32,6 +32,8 @@ class Explore {
     ~Explore();
 
     void run();
+
+    void pub_zero_vel();
 
     void cancel() {
         cancel_ = true;
@@ -63,8 +65,6 @@ class Explore {
     auto move_to_frontier(Frontier const& fs) -> bool;
 
     void turn_around();
-
-    void pub_zero_vel();
 
     auto robot_pose() -> std::optional<geometry_msgs::Pose>;
 

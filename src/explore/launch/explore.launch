@@ -13,8 +13,6 @@
 
   <!-- Move base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base">
-    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
-    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
     <rosparam file="$(find xju_explore)/param/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find xju_explore)/param/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find xju_pnc)/param/move_base_params.yaml" command="load" />

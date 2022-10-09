@@ -13,15 +13,12 @@
 
   <!-- move_base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
-    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
     <rosparam file="$(find xju_pnc)/param/costmap_params.yaml" command="load" />
     <rosparam file="$(find xju_pnc)/param/move_base_params.yaml" command="load" />
     <rosparam file="$(find xju_pnc)/param/teb_local_planner_params.yaml" command="load" />
     <rosparam file="$(find xju_pnc)/param/costmap_converter_params.yaml" command="load" />
     <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
     <remap from="odom" to="$(arg odom_topic)"/>
-    <param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
   </node>
 
   <!-- rviz -->
