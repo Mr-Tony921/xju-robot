@@ -24,10 +24,10 @@ global_costmap:
     map_topic: explore_map
     track_unknown_space: false
 
-  obstacle_lds_layer:
+  obstacle_layer:
     observation_sources: scan camera
     scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true, min_obstacle_height: -1.0 }
-    camera: { sensor_frame: camera_front_link, data_type: PointCloud2, topic: /camera_front/depth/points, obstacle_range: 3.0, raytrace_range: 3.5, marking: true, clearing: true, min_obstacle_height: 0.0 }
+    camera: { sensor_frame: camera_front_link, data_type: PointCloud2, topic: /camera_front/depth/points, obstacle_range: 3.0, raytrace_range: 3.5, marking: true, clearing: true, min_obstacle_height: 0.1 }
     track_unknown_space: false
 
   inflation_layer:
