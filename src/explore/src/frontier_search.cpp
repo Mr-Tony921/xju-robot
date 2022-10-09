@@ -21,7 +21,7 @@ auto FrontierSearch::get_frontier_point(std::optional<geometry_msgs::Pose> const
 
     boost::mutex::scoped_lock lock(list_mutex_);
     auto min_sort = std::min_element(open_list_.begin(), open_list_.end(),
-                                     [&](Frontier const& a, Frontier const& b) { return a.sort < b.sort; });
+                                     [&](Frontier const& a, Frontier const& b) { return a.sort > b.sort; });
     auto frontier = *min_sort;
     open_list_.erase(min_sort);
     close_list_.emplace_back(frontier);

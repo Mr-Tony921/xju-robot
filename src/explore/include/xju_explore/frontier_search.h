@@ -14,7 +14,7 @@
 //#define DEBUG_MODE 1
 
 namespace xju::explore {
-constexpr static const double FRONTIER_RESO = 1.0;
+constexpr static const double FRONTIER_RESO = 4.0;
 constexpr static const double CONTOUR_LINE_MAX_GRID = 12;  // unit 0.1m
 constexpr static const double CONTOUR_LINE_MIN_GRID = 3;
 constexpr static const int INFLATION_SIZE = 2;
