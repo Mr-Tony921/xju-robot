@@ -8,11 +8,16 @@
     <maintainer email="tongronglei@163.com" />
     <license>TODO</license>
     <buildtool_depend>catkin</buildtool_depend>
+    <buildtool_depend>message_generation</buildtool_depend>
+    <depend>actionlib</depend>
+    <depend>actionlib_msgs</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>roscpp</depend>
     <depend>roslaunch</depend>
     <depend>sensor_msgs</depend>
+    <depend>std_msgs</depend>
     <depend>tf2</depend>
     <depend>tf2_ros</depend>
+    <exec_depend>message_runtime</exec_depend>
 </package>
