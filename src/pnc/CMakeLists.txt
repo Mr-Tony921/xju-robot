@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
         actionlib_msgs
         geometry_msgs
         message_generation
+        mbf_msgs
         nav_msgs
         roscpp
         roslaunch
@@ -19,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
         DIRECTORY srv
         FILES
+        exe_path.srv
         record_start.srv
         record_stop.srv
 )
@@ -29,6 +31,7 @@ catkin_package(CATKIN_DEPENDS
         actionlib_msgs
         geometry_msgs
         message_runtime
+        mbf_msgs
         nav_msgs
         roscpp
         sensor_msgs
@@ -37,6 +40,11 @@ catkin_package(CATKIN_DEPENDS
         )
 
 include_directories(include/${PROJECT_NAME} ${catkin_INCLUDE_DIRS})
+
+add_executable(xju_mbf_bridge
+        node/mbf_bridge_node.cpp)
+add_dependencies(xju_mbf_bridge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(xju_mbf_bridge ${catkin_LIBRARIES})
 
 add_executable(xju_state_machine
         node/state_machine_node.cpp

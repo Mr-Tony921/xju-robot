@@ -11,6 +11,7 @@
     <buildtool_depend>message_generation</buildtool_depend>
     <depend>actionlib</depend>
     <depend>actionlib_msgs</depend>
+    <depend>mbf_msgs</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>roscpp</depend>
