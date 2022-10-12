@@ -1,0 +1,11 @@
+recovery_behaviors:
+- name: 'clear_costmap_global'
+  type: 'clear_costmap_recovery/ClearCostmapRecovery'
+- name: 'clear_costmap_local'
+  type: 'clear_costmap_recovery/ClearCostmapRecovery'
+
+get_path_recovery_behaviors:
+  - name: 'clear_costmap_global'
+
+exe_path_recovery_behaviors:
+  - name: 'clear_costmap_local'
