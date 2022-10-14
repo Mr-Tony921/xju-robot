@@ -12,10 +12,8 @@ StateMachine::StateMachine()
     tfl_(new tf2_ros::TransformListener(*tf_)),
     goto_ctrl_(new GotoCtrl("move_base_flex/move_base")),
     exe_ctrl_(new ExeCtrl("move_base_flex/exe_path")),
-    recording_(false),
-    running_(false),
-    pause_(false),
-    current_index_(0) {
+    cur_state_(StateValue::Idle),
+    cur_index_(0) {
 }
 
 StateMachine::~StateMachine() {
@@ -35,16 +33,43 @@ void StateMachine::init() {
 }
 
 void StateMachine::run() {
+  using goalState = actionlib::SimpleClientGoalState;
   ros::Rate r(ros::Duration(0.1));
   while(ros::ok()) {
     ros::spinOnce();
-    if (recording_) {
-      record_path();
-      visualize_poses(record_path_, record_path_pub_);
-    }
+    switch (cur_state_) {
+      case StateValue::Idle:
+        // do nothing, cancel goal and reset value in event
+      case StateValue::Pause:
+        // do nothing, cancel goal in event
+        break;
+      case StateValue::Record:
+        record_path();
+        visualize_poses(record_path_, record_path_pub_);
+        break;
+      case StateValue::Run:
+        if (exe_ctrl_->getState() == goalState::SUCCEEDED
+            && cur_route_.poses.size() - cur_index_ < 10
+            && distance(robot_pose().value(), cur_route_.poses.back().pose).first < 0.5) {
+          ROS_INFO("Exe path success");
+          reset();
+          break;
+        }
 
-    if (running_ && !pause_) {
-      // todo exe goto logic
+        if (exe_ctrl_->getState() != goalState::ACTIVE) {
+          if (goto_ctrl_->getState() == goalState::ACTIVE) break;
+          auto err = distance(robot_pose().value(), cur_route_.poses.at(cur_index_).pose);
+          if (err.first > 0.5 || err.second > 30 * DEG2RAD) {
+            send_goto(cur_index_);
+          } else {
+            send_exe(cur_index_);
+          }
+
+          break;
+        }
+
+        cur_index_ = nearest_index(cur_route_, cur_index_, 5, 10);
+        break;
     }
 
     r.sleep();
@@ -52,7 +77,12 @@ void StateMachine::run() {
 }
 
 void StateMachine::stop() {
-  pub_zero_vel();
+  cancel_goal();
+  // pub zero velocity for 1s
+  for (auto i = 0; i < 10; ++i) {
+    pub_zero_vel();
+    ros::Duration(0.1).sleep();
+  }
 }
 
 void StateMachine::pub_zero_vel() {
@@ -60,6 +90,25 @@ void StateMachine::pub_zero_vel() {
   vel.linear.x = 0;
   vel.angular.z = 0;
   vel_pub_.publish(vel);
+}
+
+void StateMachine::cancel_goal() {
+  if (!goto_ctrl_->getState().isDone()) {
+    ROS_INFO("Cancel current goto goal");
+    goto_ctrl_->cancelGoal();
+  }
+
+  if (!exe_ctrl_->getState().isDone()) {
+    ROS_INFO("Cancel current exe path goal");
+    exe_ctrl_->cancelGoal();
+  }
+}
+
+void StateMachine::reset() {
+  cur_state_ = StateValue::Idle;
+  cur_index_ = 0;
+  cur_route_.poses.clear();
+  stop();
 }
 
 auto StateMachine::robot_pose() -> std::optional<geometry_msgs::Pose> {
@@ -78,13 +127,40 @@ auto StateMachine::robot_pose() -> std::optional<geometry_msgs::Pose> {
   return std::make_optional(result);
 }
 
+auto StateMachine::distance(geometry_msgs::Pose const& a,
+                            geometry_msgs::Pose const& b) -> std::pair<double, double> {
+  std::pair<double, double> result;
+  result.first = std::hypot(a.position.x - b.position.x, a.position.y - b.position.y);
+  result.second = std::abs(tf2::getYaw(a.orientation) - tf2::getYaw(b.orientation));
+  return result;
+}
+
+auto StateMachine::nearest_index(nav_msgs::Path const& path, size_t const& index, int lb, int rb) -> size_t {
+  int result = index;
+  auto robot_pos = robot_pose();
+  if (!robot_pos) return result;
+
+  auto min_dis = std::numeric_limits<double>::max();
+  lb = std::max(static_cast<int>(index) - lb, 0);
+  rb = std::min(index + rb, path.poses.size());
+  for (auto i = lb; i < rb; ++i) {
+    auto err = distance(robot_pos.value(), path.poses[i].pose);
+    if (err.first < min_dis &&  err.second < 30 * DEG2RAD) {
+      min_dis = err.first;
+      result = static_cast<size_t>(i);
+    }
+  }
+
+  return result;
+}
+
 auto StateMachine::send_goto(size_t const& index) -> bool {
   if (index == std::numeric_limits<size_t>::max() || index > cur_route_.poses.size()) {
     ROS_ERROR_STREAM("send_goto index error " << index << " / " << cur_route_.poses.size());
     return false;
   }
 
-  mbf_msgs::MoveBaseGoal goal;
+  mbf_msgs::MoveBaseGoal goal{};
   goal.target_pose = cur_route_.poses.at(index);
   ROS_INFO("send_goto goal");
   goto_ctrl_->sendGoal(goal,
@@ -109,8 +185,9 @@ auto StateMachine::send_exe(size_t const& index) -> bool {
     return false;
   }
 
-  mbf_msgs::ExePathGoal goal;
+  mbf_msgs::ExePathGoal goal{};
   goal.path = cur_route_;
+  cur_route_.poses.erase(cur_route_.poses.begin(), cur_route_.poses.begin() + cur_index_);
   ROS_INFO("send_exe goal");
   exe_ctrl_->sendGoal(goal,
                       boost::bind(&StateMachine::exe_done, this, _1, _2),
@@ -128,41 +205,41 @@ void StateMachine::exe_done(const actionlib::SimpleClientGoalState& state,
 }
 
 auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::exe_path::Response& resp) -> bool {
-  if (recording_) {
+  if (cur_state_ == StateValue::Record) {
     resp.message = "Recording path now, ignore exe_path_service.";
-    return true;
+    return true; // return false will miss message in response
   }
 
   if (req.command == xju_pnc::exe_path::Request::PAUSE) {
-    if (!running_) {
-      resp.message = "No task running, ignore pause command.";
-    } else if (pause_) {
-      resp.message = "Task already pause, ignore pause command.";
+    if (cur_state_ != StateValue::Run) {
+      resp.message = "Not in RUNNING status, ignore pause command.";
     } else {
-      pause_ = true;
+      cur_state_ = StateValue::Pause;
+      stop();
       resp.message = "Task pause.";
     }
     return true;
   }
 
   if (req.command == xju_pnc::exe_path::Request::STOP) {
-    if (!running_) {
-      resp.message = "No task running, ignore stop command.";
+    if (cur_state_ != StateValue::Run && cur_state_ != StateValue::Pause) {
+      resp.message = "Not in RUNNING and PAUSE status, ignore stop command.";
     } else {
-      running_ = false;
-      pause_ = false;
+      reset();
       resp.message = "Task stop.";
     }
     return true;
   }
 
   if (req.command == xju_pnc::exe_path::Request::START) {
-    if (running_ && pause_) {
-      pause_ = false;
+    if (cur_state_ == StateValue::Pause) {
       resp.message = "Task resume.";
+      cur_index_ = nearest_index(cur_route_, cur_index_, 0, 20);
+      cur_state_ = StateValue::Run;
       return true;
     }
 
+    reset();
     auto dir = req.dir;
     if (dir == "") dir = DEFAULT_DIR;
     file_path_ = dir + "/" +req.path_name;
@@ -173,12 +250,11 @@ auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::ex
 
     if (!read_file(file_path_)) {
       resp.message = "Read path in file failed.";
+      return true;
     }
 
-    current_index_ = 0;
-    resp.message = "Execute new path!";
-//    send_goto(current_index_);
-//    record_path_pub_.publish(exe_path_);
+    cur_state_ = StateValue::Run;
+    resp.message = "Start new task!";
     return true;
   }
 
@@ -188,9 +264,9 @@ auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::ex
 
 auto
 StateMachine::record_start_service(xju_pnc::record_start::Request& req, xju_pnc::record_start::Response& resp) -> bool {
-  if (recording_) {
-    resp.message = "Already in recording process, ignore this operation.";
-    return true; // return false will miss message in response
+  if (cur_state_ != StateValue::Idle) {
+    resp.message = "Not in IDLE status, ignore record command.";
+    return true;
   }
 
   auto name = req.path_name;
@@ -213,19 +289,19 @@ StateMachine::record_start_service(xju_pnc::record_start::Request& req, xju_pnc:
   }
 
   record_path_.clear();
-  recording_ = true;
+  cur_state_ = StateValue::Record;
   resp.message = "Start recording path, save to " + file_path_ + ".";
   return true;
 }
 
 auto
 StateMachine::record_stop_service(xju_pnc::record_stop::Request& req, xju_pnc::record_stop::Response& resp) -> bool {
-  if (!recording_) {
-    resp.message = "Not in recording process, ignore this operation.";
+  if (cur_state_ != StateValue::Record) {
+    resp.message = "Not in RECORD status, ignore record stop command.";
     return true;
   }
 
-  recording_ = false;
+  cur_state_ = StateValue::Idle;
   if (!req.keep) {
     resp.message = "Do not keep teach path, discard recorded data.";
   } else {

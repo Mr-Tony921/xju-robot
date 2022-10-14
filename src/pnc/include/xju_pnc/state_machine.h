@@ -24,11 +24,19 @@ constexpr static const char* DEFAULT_DIR = "/home/tony/course_ws/path";
 constexpr static const char* RECORD_START_SRV = "xju_record_start";
 constexpr static const char* RECORD_STOP_SRV = "xju_record_stop";
 constexpr static const char* EXE_PATH_SRV = "xju_task";
+constexpr static const double DEG2RAD = M_PI / 180;
 constexpr static const double RECORD_PATH_LEN_DENS = 0.05;
-constexpr static const double RECORD_PATH_AGU_DENS = 10 * M_PI / 180;
+constexpr static const double RECORD_PATH_AGU_DENS = 10 * DEG2RAD;
 
 using GotoCtrl = actionlib::SimpleActionClient<mbf_msgs::MoveBaseAction>;
 using ExeCtrl = actionlib::SimpleActionClient<mbf_msgs::ExePathAction>;
+
+enum class StateValue : uint8_t {
+  Idle = 0,
+  Record,
+  Run,
+  Pause
+};
 
 class StateMachine {
 public:
@@ -45,7 +53,18 @@ public:
 private:
   void pub_zero_vel();
 
+  void cancel_goal();
+
+  void reset();
+
   auto robot_pose() -> std::optional<geometry_msgs::Pose>;
+
+  auto distance(geometry_msgs::Pose const& a, geometry_msgs::Pose const& b) -> std::pair<double, double>;
+
+  auto nearest_index(nav_msgs::Path const& path,
+                     size_t const& index,
+                     int lb = std::numeric_limits<int>::max(),
+                     int rb = std::numeric_limits<int>::max()) -> size_t;
 
   auto send_goto(size_t const& index) -> bool;
 
@@ -85,13 +104,10 @@ private:
   std::unique_ptr<ExeCtrl> exe_ctrl_;
 
   std::string file_path_;
-  std::atomic_bool recording_;
-  std::atomic_bool running_;
-  std::atomic_bool pause_;
-
   std::vector<geometry_msgs::Pose> record_path_;
-  nav_msgs::Path cur_route_;
 
-  size_t current_index_;
+  StateValue cur_state_;
+  size_t cur_index_;
+  nav_msgs::Path cur_route_;
 };
 }
