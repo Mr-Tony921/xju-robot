@@ -24,6 +24,7 @@ void StateMachine::init() {
   ros::NodeHandle nh;
   vel_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
   record_path_pub_ = nh.advertise<nav_msgs::Path>("record_path", 1);
+  cur_pose_pub_ = nh.advertise<geometry_msgs::PoseStamped>("current_pose", 1);
   record_start_srv_ = nh.advertiseService(RECORD_START_SRV, &StateMachine::record_start_service, this);
   record_stop_srv_ = nh.advertiseService(RECORD_STOP_SRV, &StateMachine::record_stop_service, this);
   exe_path_srv_ = nh.advertiseService(EXE_PATH_SRV, &StateMachine::exe_path_service, this);
@@ -68,7 +69,8 @@ void StateMachine::run() {
           break;
         }
 
-        cur_index_ = nearest_index(cur_route_, cur_index_, 5, 10);
+        cur_index_ = nearest_info(cur_route_, cur_index_, 0, 20, true).first;
+        cur_pose_pub_.publish(cur_route_.poses.at(cur_index_));
         break;
     }
 
@@ -135,23 +137,29 @@ auto StateMachine::distance(geometry_msgs::Pose const& a,
   return result;
 }
 
-auto StateMachine::nearest_index(nav_msgs::Path const& path, size_t const& index, int lb, int rb) -> size_t {
-  int result = index;
+auto StateMachine::nearest_info(nav_msgs::Path const& path, size_t const& index, int lb, int rb, bool following)
+-> std::pair<size_t, double> {
+  size_t idx;
   auto robot_pos = robot_pose();
-  if (!robot_pos) return result;
+  if (!robot_pos) return std::make_pair(index, 0.0);
 
-  auto min_dis = std::numeric_limits<double>::max();
+  auto dis = std::numeric_limits<double>::max();
   lb = std::max(static_cast<int>(index) - lb, 0);
   rb = std::min(index + rb, path.poses.size());
+  if (following &&  distance(robot_pos.value(), path.poses.at(index).pose).first > 1.0) {
+    rb = path.poses.size(); // maybe fatal when global path too long!
+  }
+
   for (auto i = lb; i < rb; ++i) {
     auto err = distance(robot_pos.value(), path.poses[i].pose);
-    if (err.first < min_dis &&  err.second < 30 * DEG2RAD) {
-      min_dis = err.first;
-      result = static_cast<size_t>(i);
+    if (following) err.second = 0;
+    if (err.first < dis && err.second < 30 * DEG2RAD) {
+      dis = err.first;
+      idx = static_cast<size_t>(i);
     }
   }
 
-  return result;
+  return std::make_pair(idx, dis);
 }
 
 auto StateMachine::send_goto(size_t const& index) -> bool {
@@ -234,7 +242,8 @@ auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::ex
   if (req.command == xju_pnc::exe_path::Request::START) {
     if (cur_state_ == StateValue::Pause) {
       resp.message = "Task resume.";
-      cur_index_ = nearest_index(cur_route_, cur_index_, 0, 20);
+      auto nearest = nearest_info(cur_route_, cur_index_, 0, 20);
+      cur_index_ = nearest.second < 0.1 ? nearest.first : cur_index_;
       cur_state_ = StateValue::Run;
       return true;
     }
@@ -253,6 +262,7 @@ auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::ex
       return true;
     }
 
+    record_path_pub_.publish(cur_route_);
     cur_state_ = StateValue::Run;
     resp.message = "Start new task!";
     return true;
