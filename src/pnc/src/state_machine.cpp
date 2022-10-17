@@ -7,13 +7,24 @@
 #include "state_machine.h"
 
 namespace xju::pnc {
+
+uint8_t* StateMachine::cost_translation_ = nullptr;
+
 StateMachine::StateMachine()
   : tf_(new tf2_ros::Buffer()),
     tfl_(new tf2_ros::TransformListener(*tf_)),
     goto_ctrl_(new GotoCtrl("move_base_flex/move_base")),
     exe_ctrl_(new ExeCtrl("move_base_flex/exe_path")),
     cur_state_(StateValue::Idle),
-    cur_index_(0) {
+    running_state_(RunStateValue::Goto),
+    cur_index_(0),
+    obs_index_(0) {
+  if (!cost_translation_) {
+    cost_translation_ = new uint8_t[101];
+    for (int i = 0; i < 101; ++i) {
+      cost_translation_[i] = static_cast<uint8_t>(i * 254 / 100);
+    }
+  }
 }
 
 StateMachine::~StateMachine() {
@@ -25,6 +36,8 @@ void StateMachine::init() {
   vel_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
   record_path_pub_ = nh.advertise<nav_msgs::Path>("record_path", 1);
   cur_pose_pub_ = nh.advertise<geometry_msgs::PoseStamped>("current_pose", 1);
+  costmap_sub_ = nh.subscribe(COSTMAP, 5, &StateMachine::costmap_cb, this);
+  costmap_update_sub_ = nh.subscribe(COSTMAP_UPDATE, 5, &StateMachine::costmap_update_cb, this);
   record_start_srv_ = nh.advertiseService(RECORD_START_SRV, &StateMachine::record_start_service, this);
   record_stop_srv_ = nh.advertiseService(RECORD_STOP_SRV, &StateMachine::record_stop_service, this);
   exe_path_srv_ = nh.advertiseService(EXE_PATH_SRV, &StateMachine::exe_path_service, this);
@@ -49,32 +62,119 @@ void StateMachine::run() {
         visualize_poses(record_path_, record_path_pub_);
         break;
       case StateValue::Run:
-        if (exe_ctrl_->getState() == goalState::SUCCEEDED
-            && cur_route_.poses.size() - cur_index_ < 10
-            && distance(robot_pose().value(), cur_route_.poses.back().pose).first < 0.5) {
-          ROS_INFO("Exe path success");
-          reset();
-          break;
-        }
-
-        if (exe_ctrl_->getState() != goalState::ACTIVE) {
-          if (goto_ctrl_->getState() == goalState::ACTIVE) break;
-          auto err = distance(robot_pose().value(), cur_route_.poses.at(cur_index_).pose);
-          if (err.first > 0.5 || err.second > 30 * DEG2RAD) {
-            send_goto(cur_index_);
-          } else {
-            send_exe(cur_index_);
-          }
-
-          break;
-        }
-
-        cur_index_ = nearest_info(cur_route_, cur_index_, 0, 20, true).first;
-        cur_pose_pub_.publish(cur_route_.poses.at(cur_index_));
+        running_state();
+        break;
+      default:
+        ROS_ERROR("Error StateValue!");
         break;
     }
 
     r.sleep();
+  }
+}
+
+void StateMachine::running_state() {
+  using goalState = actionlib::SimpleClientGoalState;
+  static int wait_cnt = 0;
+  switch (running_state_) {
+    // 1 跟线状态
+    case RunStateValue::Follow: {
+      // 1.1 跟线是否成功？是-任务结束（成功）
+      if (exe_ctrl_->getState() == goalState::SUCCEEDED
+          /*&& cur_route_.poses.size() - cur_index_ < 10
+          && distance(robot_pose().value(), cur_route_.poses.back().pose).first < 0.5*/) {
+        ROS_INFO("Task success!");
+        reset();
+        return;
+      }
+      // 1.2 更新机器人路径索引
+      cur_index_ = nearest_info(cur_route_, cur_index_, 0, 20, true).first;
+      cur_pose_pub_.publish(cur_route_.poses.at(cur_index_));
+      // 1.3 前方路点是否有障碍？是-切换至避障等待状态
+      for (auto i = 0; i < PATH_SAFE_DIS_NUM; ++i) {
+        if (cur_index_ + i >= cur_route_.poses.size()) break;
+        if (is_danger(cur_route_.poses.at(cur_index_ + i))) {
+          obs_index_ = cur_index_ + i;
+          ROS_WARN("Obs found at %.3f away",
+                   distance(cur_route_.poses[cur_index_].pose, cur_route_.poses[obs_index_].pose).first);
+          stop();
+          wait_cnt = 0;
+          running_state_ = RunStateValue::Wait;
+        }
+      }
+      break;
+    }
+    // 2 避障等待状态
+    case RunStateValue::Wait: {
+      // 2.1 前方路点是否仍旧为障碍？否-切换至跟线状态
+      auto still_danger = false;
+      for (auto i = 0; i < 10; ++i) {
+        if (obs_index_ + i >= cur_route_.poses.size()) break;
+        if (is_danger(cur_route_.poses.at(obs_index_ + i))) {
+          still_danger = true;
+          break;
+        }
+      }
+
+      if (!still_danger) {
+        ROS_INFO("Obs clear, keep moving");
+        running_state_ = RunStateValue::Follow;
+        send_exe(cur_index_);
+        break;
+      }
+      // 2.2 等待是否超时？是-切换至点到点状态
+      if (wait_cnt++ > WAIT_COUNT) {
+        for (auto i = obs_index_; i < cur_route_.poses.size(); ++i) {
+          if (is_free(cur_route_.poses.at(i))) {
+            cur_index_ = i;
+            break;
+          }
+        }
+
+        cur_index_ = std::min(cur_index_, cur_route_.poses.size() - 1);
+        cur_pose_pub_.publish(cur_route_.poses.at(cur_index_));
+        ROS_INFO("Wait finish, start avoid, target %lu", cur_index_);
+        running_state_ = RunStateValue::Goto;
+        send_goto(cur_index_);
+      }
+      break;
+    }
+    // 3 点到点状态
+    case RunStateValue::Goto: {
+      // 3.1 点到点是否完成？是-切换至跟线状态
+      if (goto_ctrl_->getState() == goalState::SUCCEEDED
+          /*&& distance(robot_pose().value(), cur_route_.poses[cur_index_].pose).first < 0.1
+          && distance(robot_pose().value(), cur_route_.poses[cur_index_].pose).second < 10 * DEG2RAD*/) {
+        running_state_ = RunStateValue::Follow;
+        send_exe(cur_index_);
+        break;
+      }
+      // 3.2 目标点是否安全？否-前向寻找安全点
+      if (!is_free(cur_route_.poses.at(cur_index_))) {
+        for (auto i = cur_index_; i < cur_route_.poses.size(); ++i) {
+          if (is_free(cur_route_.poses.at(i))) {
+            cur_index_ = i;
+            break;
+          }
+        }
+
+        // 3.3 路径上是否仍有可用点？是-更新目标点；否-任务结束（失败）
+        if (cur_index_ >= cur_route_.poses.size()) {
+          ROS_WARN("Task failed!");
+          reset();
+          return;
+        }
+
+        cur_pose_pub_.publish(cur_route_.poses.at(cur_index_));
+        ROS_WARN("Target not safe, update %lu", cur_index_);
+        send_goto(cur_index_);
+      }
+      break;
+    }
+    // 错误状态（不会进来）
+    default:
+      ROS_ERROR("Error RunStateValue!");
+      break;
   }
 }
 
@@ -107,6 +207,7 @@ void StateMachine::cancel_goal() {
 }
 
 void StateMachine::reset() {
+  running_state_ = RunStateValue::Goto;
   cur_state_ = StateValue::Idle;
   cur_index_ = 0;
   cur_route_.poses.clear();
@@ -160,6 +261,83 @@ auto StateMachine::nearest_info(nav_msgs::Path const& path, size_t const& index,
   }
 
   return std::make_pair(idx, dis);
+}
+
+void StateMachine::costmap_cb(nav_msgs::OccupancyGrid::ConstPtr const& msg) {
+  std::lock_guard<std::mutex> lock(map_update_mutex_);
+  if (!costmap_) {
+    ROS_WARN("Initiate new costmap");
+    costmap_ = std::make_shared<costmap_2d::Costmap2D>(msg->info.width, msg->info.height, msg->info.resolution,
+                                                       msg->info.origin.position.x, msg->info.origin.position.y);
+  } else {
+    ROS_WARN("Update costmap!");
+    costmap_->resizeMap(msg->info.width, msg->info.height, msg->info.resolution,
+                        msg->info.origin.position.x, msg->info.origin.position.y);
+  }
+
+  uint32_t x;
+  for (uint32_t y = 0; y < msg->info.height; y++) {
+    for (x = 0; x < msg->info.width; x++) {
+      if (msg->data[y * msg->info.width + x] < 0) {
+        costmap_->setCost(x, y, costmap_2d::NO_INFORMATION);
+        continue;
+      }
+      costmap_->setCost(x, y, cost_translation_[msg->data[y * msg->info.width + x]]);
+    }
+  }
+}
+
+void StateMachine::costmap_update_cb(map_msgs::OccupancyGridUpdate::ConstPtr const& msg) {
+  std::lock_guard<std::mutex> lock(map_update_mutex_);
+  if (!costmap_) {
+    ROS_WARN("Costmap not initiate yet");
+    return;
+  }
+
+  if (msg->width * msg->height != msg->data.size()
+      || msg->x + msg->width > costmap_->getSizeInCellsX()
+      || msg->y + msg->height > costmap_->getSizeInCellsY()) {
+    ROS_ERROR("Costmap update got invalid data set");
+    return;
+  }
+
+  size_t index = 0;
+  int x;
+  for (auto y = msg->y; y < msg->y + msg->height; y++) {
+    for (x = msg->x; x < msg->x + msg->width; x++) {
+      if (msg->data[index] < 0) {
+        costmap_->setCost(x, y, costmap_2d::NO_INFORMATION);
+        index++;
+        continue;
+      }
+      costmap_->setCost(x, y, cost_translation_[msg->data[index++]]);
+    }
+  }
+}
+
+auto StateMachine::is_free(const geometry_msgs::PoseStamped& pose) const -> bool {
+  auto cost = pose_cost(pose);
+  return cost < 128;
+}
+
+auto StateMachine::is_danger(const geometry_msgs::PoseStamped& pose) const -> bool {
+  auto cost = pose_cost(pose);
+  return cost >= 253;
+}
+
+auto StateMachine::pose_cost(const geometry_msgs::PoseStamped& pose) const -> uint8_t {
+  if (!costmap_) {
+    ROS_WARN("No costmap yet");
+    return true;
+  }
+
+  uint32_t mx, my;
+  if (!costmap_->worldToMap(pose.pose.position.x, pose.pose.position.y, mx, my)) {
+    ROS_WARN("Can't find point mx, my in cost map");
+    return 0;
+  }
+
+  return costmap_->getCost(mx, my);
 }
 
 auto StateMachine::send_goto(size_t const& index) -> bool {
@@ -245,6 +423,8 @@ auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::ex
       auto nearest = nearest_info(cur_route_, cur_index_, 0, 20);
       cur_index_ = nearest.second < 0.1 ? nearest.first : cur_index_;
       cur_state_ = StateValue::Run;
+      running_state_ = RunStateValue::Goto;
+      send_goto(cur_index_);
       return true;
     }
 
@@ -264,6 +444,8 @@ auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::ex
 
     record_path_pub_.publish(cur_route_);
     cur_state_ = StateValue::Run;
+    running_state_ = RunStateValue::Goto;
+    send_goto(cur_index_);
     resp.message = "Start new task!";
     return true;
   }
