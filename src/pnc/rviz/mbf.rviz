@@ -5,7 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Global Planner1/GlobalPath1
+        - /Global Planner1
         - /Robot1/TF1/Frames1
       Splitter Ratio: 0.6050959825515747
     Tree Height: 546
@@ -86,11 +86,11 @@ Visualization Manager:
           Marker Topic: /move_base_flex/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
-            InfeasibleRobotPoses: true
             LineObstacles: true
             PointObstacles: true
             RobotFootprintModel: true
             TebContainer: true
+            ViaPoints: true
           Queue Size: 100
           Value: true
         - Alpha: 1
@@ -131,10 +131,40 @@ Visualization Manager:
     - Class: rviz/Group
       Displays:
         - Alpha: 1
+          Axes Length: 1
+          Axes Radius: 0.10000000149011612
+          Class: rviz/Pose
+          Color: 255; 25; 0
+          Enabled: true
+          Head Length: 0.30000001192092896
+          Head Radius: 0.15000000596046448
+          Name: ActionTarget
+          Shaft Length: 0.5
+          Shaft Radius: 0.029999999329447746
+          Shape: Arrow
+          Topic: /current_goal
+          Unreliable: false
+          Value: true
+        - Alpha: 1
+          Axes Length: 1
+          Axes Radius: 0.10000000149011612
+          Class: rviz/Pose
+          Color: 0; 0; 0
+          Enabled: true
+          Head Length: 0.30000001192092896
+          Head Radius: 0.15000000596046448
+          Name: CurIndex
+          Shaft Length: 0.5
+          Shaft Radius: 0.029999999329447746
+          Shape: Arrow
+          Topic: /current_pose
+          Unreliable: false
+          Value: true
+        - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
           Color: 25; 255; 0
-          Enabled: true
+          Enabled: false
           Head Diameter: 0.30000001192092896
           Head Length: 0.20000000298023224
           Length: 0.30000001192092896
@@ -152,7 +182,7 @@ Visualization Manager:
           Shaft Length: 0.10000000149011612
           Topic: /record_path
           Unreliable: false
-          Value: true
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
@@ -364,16 +394,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 22.317861557006836
+      Distance: 20.163105010986328
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.7859253883361816
-        Y: 2.6563682556152344
-        Z: -1.4156783819198608
+        X: 1.9370646476745605
+        Y: 2.576683759689331
+        Z: -1.416178584098816
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -401,4 +431,4 @@ Window Geometry:
     collapsed: true
   Width: 1215
   X: 616
-  Y: 18
+  Y: 0

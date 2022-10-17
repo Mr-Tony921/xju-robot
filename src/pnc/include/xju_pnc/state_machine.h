@@ -61,10 +61,11 @@ private:
 
   auto distance(geometry_msgs::Pose const& a, geometry_msgs::Pose const& b) -> std::pair<double, double>;
 
-  auto nearest_index(nav_msgs::Path const& path,
-                     size_t const& index,
-                     int lb = std::numeric_limits<int>::max(),
-                     int rb = std::numeric_limits<int>::max()) -> size_t;
+  auto nearest_info(nav_msgs::Path const& path,
+                    size_t const& index,
+                    int lb = std::numeric_limits<int>::max(),
+                    int rb = std::numeric_limits<int>::max(),
+                    bool following = false) -> std::pair<size_t, double>;
 
   auto send_goto(size_t const& index) -> bool;
 
@@ -96,6 +97,7 @@ private:
 
   ros::Publisher vel_pub_;
   ros::Publisher record_path_pub_;
+  ros::Publisher cur_pose_pub_;
   ros::ServiceServer record_start_srv_;
   ros::ServiceServer record_stop_srv_;
   ros::ServiceServer exe_path_srv_;
