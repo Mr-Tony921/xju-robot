@@ -1,0 +1,17 @@
+uint8 EXECUTE = 0
+uint8 RECORD = 1
+
+uint8 START = 0
+uint8 PAUSE = 1
+uint8 STOP = 2
+
+uint8 KEEP = 1
+uint8 DISCARD = 2
+
+uint8 type #EXECUTE RECORD
+uint8 command #START PAUSE STOP KEEP DISCARD
+string dir
+string path_name
+---
+
+string message

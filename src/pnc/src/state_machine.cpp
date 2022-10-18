@@ -38,9 +38,7 @@ void StateMachine::init() {
   cur_pose_pub_ = nh.advertise<geometry_msgs::PoseStamped>("current_pose", 1);
   costmap_sub_ = nh.subscribe(COSTMAP, 5, &StateMachine::costmap_cb, this);
   costmap_update_sub_ = nh.subscribe(COSTMAP_UPDATE, 5, &StateMachine::costmap_update_cb, this);
-  record_start_srv_ = nh.advertiseService(RECORD_START_SRV, &StateMachine::record_start_service, this);
-  record_stop_srv_ = nh.advertiseService(RECORD_STOP_SRV, &StateMachine::record_stop_service, this);
-  exe_path_srv_ = nh.advertiseService(EXE_PATH_SRV, &StateMachine::exe_path_service, this);
+  task_srv_ = nh.advertiseService(TASK_SRV, &StateMachine::task_service, this);
   ROS_ERROR_COND(!goto_ctrl_->waitForServer(ros::Duration(5.0)), "move base action not online!");
   ROS_ERROR_COND(!exe_ctrl_->waitForServer(ros::Duration(5.0)), "exe path action not online!");
   ROS_INFO("Xju state machine initialized!");
@@ -87,10 +85,25 @@ void StateMachine::running_state() {
         reset();
         return;
       }
-      // 1.2 更新机器人路径索引
+      // 1.2 跟线是否失败？是-切换至点到点状态
+      if (exe_ctrl_->getState().isDone()) {
+        for (auto i = cur_index_; i < cur_route_.poses.size(); ++i) {
+          if (is_free(cur_route_.poses.at(i))) {
+            cur_index_ = i;
+            break;
+          }
+        }
+
+        cur_index_ = std::min(cur_index_, cur_route_.poses.size() - 1);
+        cur_pose_pub_.publish(cur_route_.poses.at(cur_index_));
+        ROS_INFO("Exe path failed, start goto, target %lu", cur_index_);
+        running_state_ = RunStateValue::Goto;
+        send_goto(cur_index_);
+      }
+      // 1.3 更新机器人路径索引
       cur_index_ = nearest_info(cur_route_, cur_index_, 0, 20, true).first;
       cur_pose_pub_.publish(cur_route_.poses.at(cur_index_));
-      // 1.3 前方路点是否有障碍？是-切换至避障等待状态
+      // 1.4 前方路点是否有障碍？是-切换至避障等待状态
       for (auto i = 0; i < PATH_SAFE_DIS_NUM; ++i) {
         if (cur_index_ + i >= cur_route_.poses.size()) break;
         if (is_danger(cur_route_.poses.at(cur_index_ + i))) {
@@ -149,9 +162,10 @@ void StateMachine::running_state() {
         send_exe(cur_index_);
         break;
       }
-      // 3.2 目标点是否安全？否-前向寻找安全点
-      if (!is_free(cur_route_.poses.at(cur_index_))) {
-        for (auto i = cur_index_; i < cur_route_.poses.size(); ++i) {
+      // 3.2 点到点是否失败及目标点是否安全？否-前向寻找安全点
+      if (goto_ctrl_->getState().isDone()
+          || !is_free(cur_route_.poses.at(cur_index_))) {
+        for (auto i = cur_index_ + 10; i < cur_route_.poses.size(); ++i) {
           if (is_free(cur_route_.poses.at(i))) {
             cur_index_ = i;
             break;
@@ -317,7 +331,7 @@ void StateMachine::costmap_update_cb(map_msgs::OccupancyGridUpdate::ConstPtr con
 
 auto StateMachine::is_free(const geometry_msgs::PoseStamped& pose) const -> bool {
   auto cost = pose_cost(pose);
-  return cost < 128;
+  return cost < 66;
 }
 
 auto StateMachine::is_danger(const geometry_msgs::PoseStamped& pose) const -> bool {
@@ -372,8 +386,10 @@ auto StateMachine::send_exe(size_t const& index) -> bool {
   }
 
   mbf_msgs::ExePathGoal goal{};
-  goal.path = cur_route_;
-  cur_route_.poses.erase(cur_route_.poses.begin(), cur_route_.poses.begin() + cur_index_);
+  nav_msgs::Path route;
+  route.header = cur_route_.header;
+  route.poses.assign(cur_route_.poses.begin() + index, cur_route_.poses.end());
+  goal.path = route;
   ROS_INFO("send_exe goal");
   exe_ctrl_->sendGoal(goal,
                       boost::bind(&StateMachine::exe_done, this, _1, _2),
@@ -390,121 +406,136 @@ void StateMachine::exe_done(const actionlib::SimpleClientGoalState& state,
   ROS_INFO("ExePath got result [%d]", result->outcome);
 }
 
-auto StateMachine::exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::exe_path::Response& resp) -> bool {
-  if (cur_state_ == StateValue::Record) {
-    resp.message = "Recording path now, ignore exe_path_service.";
-    return true; // return false will miss message in response
-  }
+auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_task::Response& resp) -> bool {
+  switch (req.type) {
+    case xju_pnc::xju_task::Request::EXECUTE: {
+      if (cur_state_ == StateValue::Record) {
+        resp.message = "Recording path now, ignore task_service.";
+        return true; // return false will miss message in response
+      }
 
-  if (req.command == xju_pnc::exe_path::Request::PAUSE) {
-    if (cur_state_ != StateValue::Run) {
-      resp.message = "Not in RUNNING status, ignore pause command.";
-    } else {
-      cur_state_ = StateValue::Pause;
-      stop();
-      resp.message = "Task pause.";
-    }
-    return true;
-  }
+      if (req.command == xju_pnc::xju_task::Request::PAUSE) {
+        if (cur_state_ != StateValue::Run) {
+          resp.message = "Not in RUNNING status, ignore pause command.";
+        } else {
+          cur_state_ = StateValue::Pause;
+          stop();
+          resp.message = "Task pause.";
+        }
+        return true;
+      }
 
-  if (req.command == xju_pnc::exe_path::Request::STOP) {
-    if (cur_state_ != StateValue::Run && cur_state_ != StateValue::Pause) {
-      resp.message = "Not in RUNNING and PAUSE status, ignore stop command.";
-    } else {
-      reset();
-      resp.message = "Task stop.";
-    }
-    return true;
-  }
+      if (req.command == xju_pnc::xju_task::Request::STOP) {
+        if (cur_state_ != StateValue::Run && cur_state_ != StateValue::Pause) {
+          resp.message = "Not in RUNNING and PAUSE status, ignore stop command.";
+        } else {
+          reset();
+          resp.message = "Task stop.";
+        }
+        return true;
+      }
 
-  if (req.command == xju_pnc::exe_path::Request::START) {
-    if (cur_state_ == StateValue::Pause) {
-      resp.message = "Task resume.";
-      auto nearest = nearest_info(cur_route_, cur_index_, 0, 20);
-      cur_index_ = nearest.second < 0.1 ? nearest.first : cur_index_;
-      cur_state_ = StateValue::Run;
-      running_state_ = RunStateValue::Goto;
-      send_goto(cur_index_);
+      if (req.command == xju_pnc::xju_task::Request::START) {
+        if (cur_state_ == StateValue::Pause) {
+          resp.message = "Task resume.";
+          auto nearest = nearest_info(cur_route_, cur_index_, 0, 20);
+          cur_index_ = nearest.second < 0.1 ? nearest.first : cur_index_;
+          cur_state_ = StateValue::Run;
+          running_state_ = RunStateValue::Goto;
+          send_goto(cur_index_);
+          return true;
+        }
+
+        reset();
+        auto dir = req.dir;
+        if (dir == "") dir = DEFAULT_DIR;
+        file_path_ = dir + "/" +req.path_name;
+        if (!check_file_exist(file_path_)) {
+          resp.message = file_path_ + " not exist, ignore start command.";
+          return true;
+        }
+
+        if (!read_file(file_path_)) {
+          resp.message = "Read path in file failed.";
+          return true;
+        }
+
+        record_path_pub_.publish(cur_route_);
+        cur_state_ = StateValue::Run;
+        running_state_ = RunStateValue::Goto;
+        send_goto(cur_index_);
+        resp.message = "Start new task!";
+        return true;
+      }
+
+      resp.message = "Wrong exe service command, do nothing.";
       return true;
     }
+    case xju_pnc::xju_task::Request::RECORD: {
+      switch (req.command) {
+        case xju_pnc::xju_task::Request::START: {
+          if (cur_state_ != StateValue::Idle) {
+            resp.message = "Not in IDLE status, ignore record command.";
+            return true;
+          }
 
-    reset();
-    auto dir = req.dir;
-    if (dir == "") dir = DEFAULT_DIR;
-    file_path_ = dir + "/" +req.path_name;
-    if (!check_file_exist(file_path_)) {
-      resp.message = file_path_ + " not exist, ignore start command.";
+          auto name = req.path_name;
+          if (name == "") {
+            auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+            std::stringstream ss;
+            ss << "teach_path_" << std::put_time(std::localtime(&t), "%F %T");
+            name = ss.str();
+          }
+
+          auto dir = req.dir;
+          if (dir == "") {
+            dir = DEFAULT_DIR;
+          }
+
+          file_path_ = dir + "/" + name;
+          if (check_file_exist(file_path_)) {
+            resp.message = "File already exist, ignore this operation.";
+            return true;
+          }
+
+          record_path_.clear();
+          cur_state_ = StateValue::Record;
+          resp.message = "Start recording path, save to " + file_path_ + ".";
+          return true;
+        }
+        case xju_pnc::xju_task::Request::KEEP:
+        case xju_pnc::xju_task::Request::DISCARD: {
+          if (cur_state_ != StateValue::Record) {
+            resp.message = "Not in RECORD status, ignore record stop command.";
+            return true;
+          }
+
+          cur_state_ = StateValue::Idle;
+          if (req.command == xju_pnc::xju_task::Request::DISCARD) {
+            resp.message = "Do not keep teach path, discard recorded data.";
+          } else {
+            if (!write_file(file_path_)) {
+              resp.message = "Write file failed.";
+            } else {
+              resp.message = "Keep teach path, save successful.";
+            }
+          }
+
+          record_path_.clear();
+          return true;
+        }
+        default:
+          ROS_ERROR("Illegal service command in record %d", req.command);
+          break;
+      }
       return true;
     }
-
-    if (!read_file(file_path_)) {
-      resp.message = "Read path in file failed.";
-      return true;
-    }
-
-    record_path_pub_.publish(cur_route_);
-    cur_state_ = StateValue::Run;
-    running_state_ = RunStateValue::Goto;
-    send_goto(cur_index_);
-    resp.message = "Start new task!";
-    return true;
-  }
-
-  resp.message = "Wrong exe service command, do nothing.";
-  return true;
-}
-
-auto
-StateMachine::record_start_service(xju_pnc::record_start::Request& req, xju_pnc::record_start::Response& resp) -> bool {
-  if (cur_state_ != StateValue::Idle) {
-    resp.message = "Not in IDLE status, ignore record command.";
-    return true;
-  }
-
-  auto name = req.path_name;
-  if (name == "") {
-    auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    std::stringstream ss;
-    ss << "teach_path_" << std::put_time(std::localtime(&t), "%F %T");
-    name = ss.str();
-  }
-
-  auto dir = req.dir;
-  if (dir == "") {
-    dir = DEFAULT_DIR;
-  }
-
-  file_path_ = dir + "/" + name;
-  if (check_file_exist(file_path_)) {
-    resp.message = "File already exist, ignore this operation.";
-    return true;
-  }
-
-  record_path_.clear();
-  cur_state_ = StateValue::Record;
-  resp.message = "Start recording path, save to " + file_path_ + ".";
-  return true;
-}
-
-auto
-StateMachine::record_stop_service(xju_pnc::record_stop::Request& req, xju_pnc::record_stop::Response& resp) -> bool {
-  if (cur_state_ != StateValue::Record) {
-    resp.message = "Not in RECORD status, ignore record stop command.";
-    return true;
-  }
-
-  cur_state_ = StateValue::Idle;
-  if (!req.keep) {
-    resp.message = "Do not keep teach path, discard recorded data.";
-  } else {
-    if (!write_file(file_path_)) {
-      resp.message = "Write file failed.";
-    } else {
-      resp.message = "Keep teach path, save successful.";
+    default: {
+      ROS_ERROR("Illegal service type %d", req.type);
+      break;
     }
   }
 
-  record_path_.clear();
   return true;
 }
 

@@ -21,9 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
         DIRECTORY srv
         FILES
-        exe_path.srv
-        record_start.srv
-        record_stop.srv
+        xju_task.srv
 )
 
 generate_messages()

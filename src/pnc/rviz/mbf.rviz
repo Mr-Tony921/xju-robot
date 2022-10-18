@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Global Planner1
         - /Robot1/TF1/Frames1
       Splitter Ratio: 0.6050959825515747
     Tree Height: 546
@@ -86,6 +85,7 @@ Visualization Manager:
           Marker Topic: /move_base_flex/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
+            InfeasibleRobotPoses: true
             LineObstacles: true
             PointObstacles: true
             RobotFootprintModel: true
@@ -164,7 +164,7 @@ Visualization Manager:
           Buffer Length: 1
           Class: rviz/Path
           Color: 25; 255; 0
-          Enabled: false
+          Enabled: true
           Head Diameter: 0.30000001192092896
           Head Length: 0.20000000298023224
           Length: 0.30000001192092896
@@ -182,7 +182,7 @@ Visualization Manager:
           Shaft Length: 0.10000000149011612
           Topic: /record_path
           Unreliable: false
-          Value: false
+          Value: true
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
@@ -264,7 +264,7 @@ Visualization Manager:
           Axes Radius: 0.009999999776482582
           Class: rviz/PoseArray
           Color: 138; 226; 52
-          Enabled: true
+          Enabled: false
           Head Length: 0.07000000029802322
           Head Radius: 0.029999999329447746
           Name: AMCL Particles
@@ -273,7 +273,7 @@ Visualization Manager:
           Shape: Arrow (Flat)
           Topic: /particlecloud
           Unreliable: false
-          Value: true
+          Value: false
         - Class: rviz/TF
           Enabled: true
           Frame Timeout: 15
