@@ -17,23 +17,19 @@
 #include "costmap_2d/costmap_2d_ros.h"
 #include "mbf_msgs/MoveBaseAction.h"
 #include "mbf_msgs/ExePathAction.h"
-#include "xju_pnc/exe_path.h"
-#include "xju_pnc/record_start.h"
-#include "xju_pnc/record_stop.h"
+#include "xju_pnc/xju_task.h"
 
 namespace xju::pnc {
 constexpr static const char* NODE_NAME = "xju_state_machine";
 constexpr static const char* DEFAULT_DIR = "/home/tony/course_ws/path";
 constexpr static const char* COSTMAP = "/move_base_flex/global_costmap/costmap";
 constexpr static const char* COSTMAP_UPDATE = "/move_base_flex/global_costmap/costmap_updates";
-constexpr static const char* RECORD_START_SRV = "xju_record_start";
-constexpr static const char* RECORD_STOP_SRV = "xju_record_stop";
-constexpr static const char* EXE_PATH_SRV = "xju_task";
+constexpr static const char* TASK_SRV = "xju_task";
 constexpr static const double DEG2RAD = M_PI / 180;
 constexpr static const double RECORD_PATH_LEN_DENS = 0.05;
 constexpr static const double RECORD_PATH_AGU_DENS = 10 * DEG2RAD;
 constexpr static const int WAIT_COUNT = 5 * 10; // 5s
-constexpr static const int PATH_SAFE_DIS_NUM = 1 / RECORD_PATH_LEN_DENS; // 1m
+constexpr static const int PATH_SAFE_DIS_NUM = 1.3 / RECORD_PATH_LEN_DENS; // 1.3m
 
 using GotoCtrl = actionlib::SimpleActionClient<mbf_msgs::MoveBaseAction>;
 using ExeCtrl = actionlib::SimpleActionClient<mbf_msgs::ExePathAction>;
@@ -100,11 +96,7 @@ private:
 
   void exe_done(const actionlib::SimpleClientGoalState& state, const mbf_msgs::ExePathResultConstPtr& result);
 
-  auto exe_path_service(xju_pnc::exe_path::Request& req, xju_pnc::exe_path::Response& resp) -> bool;
-
-  auto record_start_service(xju_pnc::record_start::Request& req, xju_pnc::record_start::Response& resp) -> bool;
-
-  auto record_stop_service(xju_pnc::record_stop::Request& req, xju_pnc::record_stop::Response& resp) -> bool;
+  auto task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_task::Response& resp) -> bool;
 
   void record_path();
 
@@ -125,9 +117,7 @@ private:
   ros::Publisher cur_pose_pub_;
   ros::Subscriber costmap_sub_;
   ros::Subscriber costmap_update_sub_;
-  ros::ServiceServer record_start_srv_;
-  ros::ServiceServer record_stop_srv_;
-  ros::ServiceServer exe_path_srv_;
+  ros::ServiceServer task_srv_;
 
   std::unique_ptr<GotoCtrl> goto_ctrl_;
   std::unique_ptr<ExeCtrl> exe_ctrl_;
@@ -137,7 +127,8 @@ private:
 
   StateValue cur_state_;
   RunStateValue running_state_;
-  size_t cur_index_, obs_index_;
+  size_t cur_index_;
+  size_t obs_index_;
   nav_msgs::Path cur_route_;
 
   std::mutex map_update_mutex_;
