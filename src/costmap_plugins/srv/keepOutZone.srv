@@ -1,0 +1,6 @@
+uint8 command # 0 - add; 1 - remove; 2 - clear; 3 - start record; 4 - stop record
+uint8 cost
+geometry_msgs/PointStamped[] zone
+uint32 id
+---
+uint32 id

@@ -12,6 +12,7 @@
     <depend>actionlib</depend>
     <depend>actionlib_msgs</depend>
     <depend>costmap_2d</depend>
+    <depend>costmap_plugins</depend>
     <depend>mbf_msgs</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>

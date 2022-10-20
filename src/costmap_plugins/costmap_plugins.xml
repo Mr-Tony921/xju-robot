@@ -1,0 +1,5 @@
+<library path="lib/libkeep_out_layer">
+    <class type="costmap_2d::KeepOutLayer" base_class_type="costmap_2d::Layer">
+        <description>ROS-Package that implements a costmap layer to add keep out zones by services.</description>
+    </class>
+</library>

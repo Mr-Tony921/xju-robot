@@ -79,7 +79,6 @@ class Explore {
     std::atomic_bool resume_;
 
     ros::Publisher vel_pub_;
-    ros::ServiceClient set_manual_config_;
 
     Frontier current_;
 };
