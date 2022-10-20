@@ -1,6 +1,7 @@
 global_costmap:
   plugins:
     - { name: static_layer,    type: "costmap_2d::StaticLayer" }
+    - { name: keep_out_layer,  type: "costmap_2d::KeepOutLayer" }
     - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
     - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
 
@@ -23,6 +24,10 @@ global_costmap:
     map_topic: /map
     track_unknown_space: false
 
+  keep_out_layer:
+    enabled: true
+    fill_zones: false
+
   obstacle_layer:
     observation_sources: scan camera
     scan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true, min_obstacle_height: -1.0 }
@@ -35,6 +40,7 @@ global_costmap:
 
 local_costmap:
   plugins:
+    - { name: keep_out_layer,  type: "costmap_2d::KeepOutLayer" }
     - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
     - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
 
@@ -53,6 +59,10 @@ local_costmap:
   width: 6
   height: 6
   resolution: 0.05
+
+  keep_out_layer:
+    enabled: true
+    fill_zones: false
 
   obstacle_layer:
     observation_sources: scan camera

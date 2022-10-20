@@ -62,6 +62,14 @@ Visualization Manager:
       Unreliable: false
       Use Timestamp: false
       Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Polygon
+      Color: 239; 41; 41
+      Enabled: true
+      Name: Keepout zone
+      Topic: /move_base_flex/global_costmap/keep_out_layer/record_zone
+      Unreliable: false
+      Value: true
     - Class: rviz/Group
       Displays:
         - Alpha: 1
@@ -85,7 +93,6 @@ Visualization Manager:
           Marker Topic: /move_base_flex/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
-            InfeasibleRobotPoses: true
             LineObstacles: true
             PointObstacles: true
             RobotFootprintModel: true
