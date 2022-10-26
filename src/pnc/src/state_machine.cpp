@@ -35,12 +35,16 @@ void StateMachine::init() {
   ros::NodeHandle nh;
   vel_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
   record_path_pub_ = nh.advertise<nav_msgs::Path>("record_path", 1);
+  record_point_pub_ = nh.advertise<geometry_msgs::PolygonStamped>("record_zone", 1);
   cur_pose_pub_ = nh.advertise<geometry_msgs::PoseStamped>("current_pose", 1);
+  point_sub_ = nh.subscribe(RVIZ_POINT, 1, &StateMachine::point_cb, this);
   costmap_sub_ = nh.subscribe(COSTMAP, 5, &StateMachine::costmap_cb, this);
   costmap_update_sub_ = nh.subscribe(COSTMAP_UPDATE, 5, &StateMachine::costmap_update_cb, this);
   task_srv_ = nh.advertiseService(TASK_SRV, &StateMachine::task_service, this);
+  coverage_srv_ = nh.serviceClient<coverage_path_planner::GetPathInZone>("/xju_zone_path");
   ROS_ERROR_COND(!goto_ctrl_->waitForServer(ros::Duration(5.0)), "move base action not online!");
   ROS_ERROR_COND(!exe_ctrl_->waitForServer(ros::Duration(5.0)), "exe path action not online!");
+  record_path_.header.frame_id = "map";
   ROS_INFO("Xju state machine initialized!");
 }
 
@@ -57,7 +61,7 @@ void StateMachine::run() {
         break;
       case StateValue::Record:
         record_path();
-        visualize_poses(record_path_, record_path_pub_);
+        record_path_pub_.publish(record_path_);
         break;
       case StateValue::Run:
         running_state();
@@ -277,6 +281,23 @@ auto StateMachine::nearest_info(nav_msgs::Path const& path, size_t const& index,
   return std::make_pair(idx, dis);
 }
 
+void StateMachine::point_cb(geometry_msgs::PointStampedConstPtr const& msg) {
+  if (cur_state_ != StateValue::Record) return;
+
+  record_points_.emplace_back(*msg);
+  geometry_msgs::PolygonStamped polygon;
+  polygon.header.frame_id = "map";
+  polygon.header.stamp = ros::Time::now();
+  geometry_msgs::Point32 point32;
+  for (auto const& p : record_points_) {
+    point32.x = p.point.x;
+    point32.y = p.point.y;
+    point32.z = 0;
+    polygon.polygon.points.emplace_back(point32);
+  }
+  record_point_pub_.publish(polygon);
+}
+
 void StateMachine::costmap_cb(nav_msgs::OccupancyGrid::ConstPtr const& msg) {
   std::lock_guard<std::mutex> lock(map_update_mutex_);
   if (!costmap_) {
@@ -483,7 +504,7 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
           if (name == "") {
             auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             std::stringstream ss;
-            ss << "teach_path_" << std::put_time(std::localtime(&t), "%F %T");
+            ss << "path_" << std::put_time(std::localtime(&t), "%F %T");
             name = ss.str();
           }
 
@@ -498,12 +519,15 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
             return true;
           }
 
-          record_path_.clear();
+          record_path_.poses.clear();
+          record_points_.clear();
           cur_state_ = StateValue::Record;
           resp.message = "Start recording path, save to " + file_path_ + ".";
           return true;
         }
-        case xju_pnc::xju_task::Request::KEEP:
+        case xju_pnc::xju_task::Request::KEEP_TEACH:
+        case xju_pnc::xju_task::Request::KEEP_COVER_ZZ:
+        case xju_pnc::xju_task::Request::KEEP_COVER_BS:
         case xju_pnc::xju_task::Request::DISCARD: {
           if (cur_state_ != StateValue::Record) {
             resp.message = "Not in RECORD status, ignore record stop command.";
@@ -512,16 +536,52 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
 
           cur_state_ = StateValue::Idle;
           if (req.command == xju_pnc::xju_task::Request::DISCARD) {
-            resp.message = "Do not keep teach path, discard recorded data.";
+            resp.message = "Do not keep path, discard recorded data.";
           } else {
-            if (!write_file(file_path_)) {
-              resp.message = "Write file failed.";
+            if (req.command == xju_pnc::xju_task::Request::KEEP_TEACH) {
+              std::vector<nav_msgs::Path> paths{record_path_};
+              if (!write_file(file_path_, paths)) {
+                resp.message = "Write file failed.";
+              } else {
+                resp.message = "Keep teach path, save successful.";
+              }
             } else {
-              resp.message = "Keep teach path, save successful.";
+              if (!record_points_.empty()) {
+                ROS_INFO("Got %lu record points, discard record path!", record_points_.size());
+                record_path_.poses.clear();
+                geometry_msgs::PoseStamped pose;
+                pose.pose.orientation.w = 1.0;
+                for (auto const& p : record_points_) {
+                  pose.pose.position = p.point;
+                  record_path_.poses.emplace_back(pose);
+                }
+              } else {
+                ROS_INFO("No record point, use record path %lu", record_path_.poses.size());
+              }
+              coverage_path_planner::GetPathInZone r{};
+              r.request.zone = record_path_;
+              r.request.type = req.command == xju_pnc::xju_task::Request::KEEP_COVER_ZZ ? 0 : 1;
+              if (coverage_srv_.call(r)) {
+                ROS_INFO("Coverage service call success, got %lu paths", r.response.coverage_paths.size());
+                record_path_.poses.clear();
+                for (auto const& path : r.response.coverage_paths) {
+                  for (auto const& p : path.poses) {
+                    record_path_.poses.emplace_back(p);
+                  }
+                }
+                record_path_pub_.publish(record_path_);
+              }
+
+              if (!write_file(file_path_, r.response.coverage_paths)) {
+                resp.message = "Write file failed.";
+              } else {
+                resp.message = "Keep cover path, save successful.";
+              }
             }
           }
 
-          record_path_.clear();
+          record_path_.poses.clear();
+          record_points_.clear();
           return true;
         }
         default:
@@ -543,30 +603,19 @@ void StateMachine::record_path() {
   auto pose = robot_pose();
   if (!pose) return;
 
-  if (record_path_.empty()) {
-    record_path_.emplace_back(pose.value());
+  geometry_msgs::PoseStamped ps;
+  if (record_path_.poses.empty()) {
+    ps.pose = pose.value();
+    record_path_.poses.emplace_back(ps);
     return;
   }
 
-  auto len = std::hypot(record_path_.back().position.x - pose->position.x,
-                        record_path_.back().position.y - pose->position.y);
-  auto agu = std::abs(tf2::getYaw(record_path_.back().orientation) - tf2::getYaw(pose->orientation));
+  auto len = std::hypot(record_path_.poses.back().pose.position.x - pose->position.x,
+                        record_path_.poses.back().pose.position.y - pose->position.y);
+  auto agu = std::abs(tf2::getYaw(record_path_.poses.back().pose.orientation) - tf2::getYaw(pose->orientation));
   if (len < RECORD_PATH_LEN_DENS && agu < RECORD_PATH_AGU_DENS) return;
-  record_path_.emplace_back(pose.value());
-}
-
-void StateMachine::visualize_poses(std::vector<geometry_msgs::Pose> const& poses, ros::Publisher const& pub) {
-  nav_msgs::Path path;
-  path.header.stamp = ros::Time::now();
-  path.header.frame_id = "map";
-  for (auto const& p : poses) {
-    geometry_msgs::PoseStamped ps;
-    ps.header.frame_id = "map";
-    ps.pose = p;
-    path.poses.emplace_back(ps);
-  }
-
-  pub.publish(path);
+  ps.pose = pose.value();
+  record_path_.poses.emplace_back(ps);
 }
 
 auto StateMachine::check_file_exist(std::string& file_path) -> bool {
@@ -574,21 +623,23 @@ auto StateMachine::check_file_exist(std::string& file_path) -> bool {
   return !!exist;
 }
 
-auto StateMachine::write_file(std::string& file_path) -> bool {
+auto StateMachine::write_file(std::string& file_path, std::vector<nav_msgs::Path> const& paths) -> bool {
   std::ofstream out(file_path.c_str());
   if (!out.is_open()) {
     ROS_ERROR("Open file %s failed!", file_path.c_str());
     return false;
   }
 
-  int lines = 0;
-  for (auto const& p : record_path_) {
-    ++lines;
-    out << std::to_string(p.position.x) << " " << std::to_string(p.position.y) << " " << std::to_string(tf2::getYaw(p.orientation)) << "\n";
+  for (auto const& path : paths) {
+    for (auto const& p : path.poses) {
+      out << std::to_string(p.pose.position.x) << " "
+          << std::to_string(p.pose.position.y) << " "
+          << std::to_string(tf2::getYaw(p.pose.orientation)) << "\n";
+    }
+    out << "EOP" << "\n";
   }
 
   out.close();
-  ROS_INFO("Write path success. (%d poses)", lines);
   return true;
 }
 

@@ -16,7 +16,6 @@ void KeepOutLayer::onInitialize() {
 
   nh.param("enabled", enabled_, false);
   nh.param("fill_zones", fill_zones_, true);
-  ROS_ERROR("%%%%%%%%$$$$$$$$$$$########## %d %d", enabled_, fill_zones_);
 
   map_received_ = false;
   rolling_window_ = layered_costmap_->isRolling();

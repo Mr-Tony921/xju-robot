@@ -1,0 +1,8 @@
+<launch>
+  <!-- path coverage -->
+  <node pkg="coverage_path_planner" type="path_planning_node" name="path_planning_node" output="screen" clear_params="true">
+    <param name="size_of_cell" type="int" value="7"/>
+    <param name="free_threshold" type="int" value="75"/>
+    <param name="debug_path" type="string" value="$(optenv RR_SCRUB_NAV)/clean_path"/>
+  </node>
+</launch>

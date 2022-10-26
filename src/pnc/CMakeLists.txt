@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
         actionlib_msgs
         costmap_2d
         costmap_plugins
+        coverage_path_planner
         geometry_msgs
         message_generation
         mbf_msgs
@@ -31,6 +32,7 @@ catkin_package(CATKIN_DEPENDS
         actionlib_msgs
         costmap_2d
         costmap_plugins
+        coverage_path_planner
         geometry_msgs
         message_runtime
         mbf_msgs

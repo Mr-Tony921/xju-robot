@@ -15,6 +15,7 @@
 
 #include "costmap_2d/costmap_2d.h"
 #include "costmap_2d/costmap_2d_ros.h"
+#include "coverage_path_planner/GetPathInZone.h"
 #include "mbf_msgs/MoveBaseAction.h"
 #include "mbf_msgs/ExePathAction.h"
 #include "xju_pnc/xju_task.h"
@@ -22,6 +23,7 @@
 namespace xju::pnc {
 constexpr static const char* NODE_NAME = "xju_state_machine";
 constexpr static const char* DEFAULT_DIR = "/home/tony/course_ws/path";
+constexpr static const char* RVIZ_POINT = "/clicked_point";
 constexpr static const char* COSTMAP = "/move_base_flex/global_costmap/costmap";
 constexpr static const char* COSTMAP_UPDATE = "/move_base_flex/global_costmap/costmap_updates";
 constexpr static const char* TASK_SRV = "xju_task";
@@ -82,6 +84,8 @@ private:
 
   void costmap_update_cb(map_msgs::OccupancyGridUpdate::ConstPtr const& msg);
 
+  void point_cb(geometry_msgs::PointStampedConstPtr const& msg);
+
   auto is_free(const geometry_msgs::PoseStamped& pose) const -> bool;
 
   auto is_danger(const geometry_msgs::PoseStamped& pose) const -> bool;
@@ -100,11 +104,9 @@ private:
 
   void record_path();
 
-  void visualize_poses(std::vector<geometry_msgs::Pose> const& poses, ros::Publisher const& pub);
-
   auto check_file_exist(std::string& file_path) -> bool;
 
-  auto write_file(std::string& file_path) -> bool;
+  auto write_file(std::string& file_path, std::vector<nav_msgs::Path> const& paths) -> bool;
 
   auto read_file(std::string& file_path) -> bool;
 
@@ -115,15 +117,19 @@ private:
   ros::Publisher vel_pub_;
   ros::Publisher record_path_pub_;
   ros::Publisher cur_pose_pub_;
+  ros::Publisher record_point_pub_;
+  ros::Subscriber point_sub_;
   ros::Subscriber costmap_sub_;
   ros::Subscriber costmap_update_sub_;
   ros::ServiceServer task_srv_;
+  ros::ServiceClient coverage_srv_;
 
   std::unique_ptr<GotoCtrl> goto_ctrl_;
   std::unique_ptr<ExeCtrl> exe_ctrl_;
 
   std::string file_path_;
-  std::vector<geometry_msgs::Pose> record_path_;
+  nav_msgs::Path record_path_;
+  std::vector<geometry_msgs::PointStamped> record_points_;
 
   StateValue cur_state_;
   RunStateValue running_state_;
