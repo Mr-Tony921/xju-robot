@@ -27,6 +27,9 @@
     <!-- state machine -->
     <node pkg="xju_pnc" type="xju_state_machine" respawn="false" name="xju_state_machine" output="screen" />
 
+    <!-- coverage_path_planner -->
+    <include file="$(find coverage_path_planner)/launch/path_planning.launch" />
+
     <!-- rviz -->
     <group if="$(arg pnc_rviz)">
         <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_pnc)/rviz/mbf.rviz" />

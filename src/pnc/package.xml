@@ -13,6 +13,7 @@
     <depend>actionlib_msgs</depend>
     <depend>costmap_2d</depend>
     <depend>costmap_plugins</depend>
+    <depend>coverage_path_planner</depend>
     <depend>mbf_msgs</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>

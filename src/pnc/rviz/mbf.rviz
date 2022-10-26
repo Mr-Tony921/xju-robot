@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Global Planner1/RecordZone1
         - /Robot1/TF1/Frames1
       Splitter Ratio: 0.6050959825515747
     Tree Height: 546
@@ -93,11 +94,7 @@ Visualization Manager:
           Marker Topic: /move_base_flex/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
-            LineObstacles: true
-            PointObstacles: true
-            RobotFootprintModel: true
-            TebContainer: true
-            ViaPoints: true
+            {}
           Queue Size: 100
           Value: true
         - Alpha: 1
@@ -188,6 +185,14 @@ Visualization Manager:
           Shaft Diameter: 0.10000000149011612
           Shaft Length: 0.10000000149011612
           Topic: /record_path
+          Unreliable: false
+          Value: true
+        - Alpha: 1
+          Class: rviz/Polygon
+          Color: 52; 101; 164
+          Enabled: true
+          Name: RecordZone
+          Topic: /record_zone
           Unreliable: false
           Value: true
         - Alpha: 1
@@ -395,7 +400,7 @@ Visualization Manager:
     - Class: rviz/SetGoal
       Topic: /move_base_simple/goal
     - Class: rviz/PublishPoint
-      Single click: true
+      Single click: false
       Topic: /clicked_point
   Value: true
   Views:

@@ -1,0 +1,4 @@
+nav_msgs/Path zone
+uint8 type # 0 - zigzag; 1 - backshaped
+---
+nav_msgs/Path[] coverage_paths
