@@ -20,7 +20,7 @@ void KeepOutLayer::onInitialize() {
   map_received_ = false;
   rolling_window_ = layered_costmap_->isRolling();
   setDefaultValue(NO_INFORMATION);
-  zone_pub_ = nh.advertise<geometry_msgs::PolygonStamped>("record_zone", 1);
+  zone_pub_ = nh.advertise<geometry_msgs::PolygonStamped>("/record_zone", 1);
   map_sub_ = nh.subscribe("/map", 1, &KeepOutLayer::incomingMap, this);
   point_sub_ = nh.subscribe("/clicked_point", 1, &KeepOutLayer::incomingPoint, this);
 

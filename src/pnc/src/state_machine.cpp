@@ -85,8 +85,17 @@ void StateMachine::running_state() {
       if (exe_ctrl_->getState() == goalState::SUCCEEDED
           /*&& cur_route_.poses.size() - cur_index_ < 10
           && distance(robot_pose().value(), cur_route_.poses.back().pose).first < 0.5*/) {
-        ROS_INFO("Task success!");
-        reset();
+        if (routes_.empty()) {
+          ROS_INFO("Task success!");
+          reset();
+        } else {
+          // 1.1.2 切换路径
+          cur_route_ = routes_.front();
+          cur_index_ = 0;
+          routes_.pop_front();
+          running_state_ = RunStateValue::Goto;
+          send_goto(cur_index_);
+        }
         return;
       }
       // 1.2 跟线是否失败？是-切换至点到点状态
@@ -178,8 +187,16 @@ void StateMachine::running_state() {
 
         // 3.3 路径上是否仍有可用点？是-更新目标点；否-任务结束（失败）
         if (cur_index_ >= cur_route_.poses.size()) {
-          ROS_WARN("Task failed!");
-          reset();
+          if (routes_.empty()) {
+            ROS_WARN("Task failed!");
+            reset();
+          } else {
+            // 3.3.2 切换路径
+            cur_route_ = routes_.front();
+            cur_index_ = 0;
+            routes_.pop_front();
+            send_goto(cur_index_);
+          }
           return;
         }
 
@@ -229,6 +246,7 @@ void StateMachine::reset() {
   cur_state_ = StateValue::Idle;
   cur_index_ = 0;
   cur_route_.poses.clear();
+  routes_.clear();
   stop();
 }
 
@@ -481,7 +499,8 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
           return true;
         }
 
-        record_path_pub_.publish(cur_route_);
+        cur_route_ = routes_.front();
+        routes_.pop_front();
         cur_state_ = StateValue::Run;
         running_state_ = RunStateValue::Goto;
         send_goto(cur_index_);
@@ -650,17 +669,22 @@ auto StateMachine::read_file(std::string& file_path) -> bool {
     return false;
   }
 
-  cur_route_.header.frame_id = "map";
-  cur_route_.header.stamp = ros::Time::now();
-  cur_route_.poses.clear();
-  int lines = 0;
+  nav_msgs::Path route;
+  route.header.frame_id = "map";
+  route.header.stamp = ros::Time::now();
   std::string contend, temp;
   std::vector<std::string> temps;
+  record_path_.poses.clear();
   while (getline(in, contend)) {
-    ++lines;
+    if (contend == "EOP" && !route.poses.empty()) {
+      ROS_INFO("Route %lu got %lu poses", routes_.size() + 1, route.poses.size());
+      routes_.emplace_back(route);
+      route.poses.clear();
+      continue;
+    }
+
     temps.clear();
     temp.clear();
-
     for (auto const& c : contend) {
       if (c != ' ') {
         temp += c;
@@ -669,13 +693,8 @@ auto StateMachine::read_file(std::string& file_path) -> bool {
         temp.clear();
       }
     }
-
     if (!temp.empty()) temps.emplace_back(temp);
-    if (temps.size() != 3) {
-      ROS_ERROR("%d line in %s file not correct!", lines, file_path.c_str());
-      continue;
-    }
-
+    if (temps.size() != 3) continue;
     geometry_msgs::PoseStamped p;
     p.header.frame_id = "map";
     p.header.stamp = ros::Time::now();
@@ -683,10 +702,12 @@ auto StateMachine::read_file(std::string& file_path) -> bool {
     p.pose.position.y = std::stod(temps[1]);
     p.pose.orientation.z = std::sin(std::stod(temps[2]) / 2.0);
     p.pose.orientation.w = std::cos(std::stod(temps[2]) / 2.0);
-    cur_route_.poses.emplace_back(p);
+    route.poses.emplace_back(p);
+    record_path_.poses.emplace_back(p);
   }
 
-  ROS_INFO("Read path success. (%d poses)", lines);
-  return !cur_route_.poses.empty();
+  record_path_pub_.publish(record_path_); // for debug
+  record_path_.poses.clear();
+  return !routes_.empty();
 }
 }
