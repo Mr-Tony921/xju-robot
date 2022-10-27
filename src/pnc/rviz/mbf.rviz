@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Global Planner1/RecordZone1
         - /Robot1/TF1/Frames1
       Splitter Ratio: 0.6050959825515747
     Tree Height: 546
@@ -57,18 +56,18 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /map
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988079071
       Class: rviz/Polygon
       Color: 239; 41; 41
       Enabled: true
-      Name: Keepout zone
-      Topic: /move_base_flex/global_costmap/keep_out_layer/record_zone
+      Name: Debug zone
+      Topic: /record_zone
       Unreliable: false
       Value: true
     - Class: rviz/Group
@@ -94,7 +93,11 @@ Visualization Manager:
           Marker Topic: /move_base_flex/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
-            {}
+            LineObstacles: true
+            PointObstacles: true
+            RobotFootprintModel: true
+            TebContainer: true
+            ViaPoints: true
           Queue Size: 100
           Value: true
         - Alpha: 1
@@ -185,14 +188,6 @@ Visualization Manager:
           Shaft Diameter: 0.10000000149011612
           Shaft Length: 0.10000000149011612
           Topic: /record_path
-          Unreliable: false
-          Value: true
-        - Alpha: 1
-          Class: rviz/Polygon
-          Color: 52; 101; 164
-          Enabled: true
-          Name: RecordZone
-          Topic: /record_zone
           Unreliable: false
           Value: true
         - Alpha: 1
@@ -406,7 +401,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 20.163105010986328
+      Distance: 31.727035522460938
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

@@ -136,6 +136,7 @@ private:
   size_t cur_index_;
   size_t obs_index_;
   nav_msgs::Path cur_route_;
+  std::list<nav_msgs::Path> routes_;
 
   std::mutex map_update_mutex_;
 
