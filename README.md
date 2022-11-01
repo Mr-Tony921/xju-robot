@@ -20,3 +20,6 @@ Video link:【XJU移动机器人仿真-第5期 探索建图（A-SLAM、Explorati
 
 Class 6: teach path following (1).<br>
 Video link:【XJU移动机器人仿真-第6期 示教路径跟随【上】（move_base_flex、action、service、state machine）】 https://www.bilibili.com/video/BV1XP4y1U73v/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 7: teach path following (2).<br>
+Video link:【XJU移动机器人仿真-第7期 示教路径跟随【下】（avoid、running state）】 https://www.bilibili.com/video/BV12G4y1h71R/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
