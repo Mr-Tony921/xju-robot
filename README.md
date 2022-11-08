@@ -23,3 +23,6 @@ Video link:【XJU移动机器人仿真-第6期 示教路径跟随【上】（mov
 
 Class 7: teach path following (2).<br>
 Video link:【XJU移动机器人仿真-第7期 示教路径跟随【下】（avoid、running state）】 https://www.bilibili.com/video/BV12G4y1h71R/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 8: keep out layer.<br>
+Video link:【XJU移动机器人仿真-第8期 禁行区/虚拟墙（costmap plugins、keepout layer）】 https://www.bilibili.com/video/BV1NG4y1f7YZ/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
