@@ -56,12 +56,12 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: Map
       Topic: /map
       Unreliable: false
       Use Timestamp: false
-      Value: false
+      Value: true
     - Alpha: 0.699999988079071
       Class: rviz/Polygon
       Color: 239; 41; 41
@@ -93,11 +93,7 @@ Visualization Manager:
           Marker Topic: /move_base_flex/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
-            LineObstacles: true
-            PointObstacles: true
-            RobotFootprintModel: true
-            TebContainer: true
-            ViaPoints: true
+            {}
           Queue Size: 100
           Value: true
         - Alpha: 1
@@ -132,6 +128,14 @@ Visualization Manager:
           Topic: /move_base_flex/local_costmap/costmap
           Unreliable: false
           Use Timestamp: false
+          Value: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /wf_marker
+          Name: WFMarker
+          Namespaces:
+            "": true
+          Queue Size: 100
           Value: true
       Enabled: true
       Name: Local Planner

@@ -55,3 +55,8 @@ add_executable(xju_state_machine
         src/state_machine.cpp)
 add_dependencies(xju_state_machine ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(xju_state_machine ${catkin_LIBRARIES})
+
+add_executable(xju_wall_follow
+        node/wall_follow_node.cpp)
+add_dependencies(xju_wall_follow ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(xju_wall_follow ${catkin_LIBRARIES})
