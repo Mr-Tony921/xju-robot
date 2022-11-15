@@ -26,3 +26,6 @@ Video link:【XJU移动机器人仿真-第7期 示教路径跟随【下】（avo
 
 Class 8: keep out layer.<br>
 Video link:【XJU移动机器人仿真-第8期 禁行区/虚拟墙（costmap plugins、keepout layer）】 https://www.bilibili.com/video/BV1NG4y1f7YZ/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 9: Coverage path planning.<br>
+Video link:【XJU移动机器人仿真-第9期 全覆盖路径（Coverage path planning、Multi-paths state machine）】 https://www.bilibili.com/video/BV1sP4y117o2/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
