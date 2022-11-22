@@ -29,3 +29,6 @@ Video link:【XJU移动机器人仿真-第8期 禁行区/虚拟墙（costmap plu
 
 Class 9: Coverage path planning.<br>
 Video link:【XJU移动机器人仿真-第9期 全覆盖路径（Coverage path planning、Multi-paths state machine）】 https://www.bilibili.com/video/BV1sP4y117o2/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 10: Wall follow controller.<br>
+Video link:【XJU移动机器人仿真-第10期 沿边控制（1D navigation）】 https://www.bilibili.com/video/BV1cd4y1t7LJ/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
