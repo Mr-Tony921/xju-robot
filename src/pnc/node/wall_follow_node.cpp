@@ -34,8 +34,8 @@ public:
                                   cur_vel_.linear.x = get_lon_vel(); // 纵向速度
                                   cur_vel_.angular.z = get_lat_vel(); // 航向速度
                                   vel_pub_.publish(cur_vel_);
-                                  ROS_INFO("meet %d bye %d front %.3f side %.3f v %.3f w %.3f",
-                                           meet_, bye_, front_, side_, cur_vel_.linear.x, cur_vel_.angular.z);
+//                                  ROS_INFO("meet %d bye %d front %.3f side %.3f v %.3f w %.3f",
+//                                           meet_, bye_, front_, side_, cur_vel_.linear.x, cur_vel_.angular.z);
                                 },
                                 false, false);
   }
@@ -135,7 +135,7 @@ private:
   }
 
   double get_lon_vel() {
-    const double v_max = 0.8;
+    const double v_max = 0.5;
     const double l_max = 1.0;
     meet_ = front_ < SIDE_TARGET + 0.061 + 0.05;
     auto coff = std::min(1.0, front_ / l_max);

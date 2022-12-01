@@ -1,0 +1,12 @@
+<launch>
+  <!-- wall follow node -->
+  <node pkg="xju_pnc" type="xju_wall_follow" name="wall_follow" output="screen">
+    <!--remap from="cmd_vel" to="wall_follow_cmd_vel"/-->
+  </node>
+
+  <!-- speed smoother node -->
+  <!--<node pkg="xju_pnc" type="xju_speed_smoother" name="speed_smoother" output="screen">
+    <remap from="input" to="wall_follow_cmd_vel"/>
+    <remap from="output" to="cmd_vel"/>
+  </node>-->
+</launch>
