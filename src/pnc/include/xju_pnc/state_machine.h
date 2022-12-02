@@ -16,6 +16,7 @@
 #include "costmap_2d/costmap_2d.h"
 #include "costmap_2d/costmap_2d_ros.h"
 #include "coverage_path_planner/GetPathInZone.h"
+#include "half_struct_planner.h"
 #include "mbf_msgs/MoveBaseAction.h"
 #include "mbf_msgs/ExePathAction.h"
 #include "xju_pnc/xju_task.h"
@@ -35,6 +36,7 @@ constexpr static const int PATH_SAFE_DIS_NUM = 1.3 / RECORD_PATH_LEN_DENS; // 1.
 
 using GotoCtrl = actionlib::SimpleActionClient<mbf_msgs::MoveBaseAction>;
 using ExeCtrl = actionlib::SimpleActionClient<mbf_msgs::ExePathAction>;
+using lines_type = std::vector<std::pair<std::pair<double, double>, std::pair<double, double>>>;
 
 enum class StateValue : uint8_t {
   Idle = 0,
@@ -84,6 +86,8 @@ private:
 
   void costmap_update_cb(map_msgs::OccupancyGridUpdate::ConstPtr const& msg);
 
+  void traffic_goal_cb(geometry_msgs::PoseStamped::ConstPtr const& msg);
+
   void point_cb(geometry_msgs::PointStampedConstPtr const& msg);
 
   auto is_free(const geometry_msgs::PoseStamped& pose) const -> bool;
@@ -110,6 +114,10 @@ private:
 
   auto read_file(std::string& file_path) -> bool;
 
+  auto write_traffic_route(std::string& file_path, std::vector<geometry_msgs::PointStamped> const& line) -> bool;
+
+  auto read_traffic_route(std::string& file_path, lines_type& lines) -> bool;
+
 private:
   std::unique_ptr<tf2_ros::Buffer> tf_;
   std::unique_ptr<tf2_ros::TransformListener> tfl_;
@@ -117,10 +125,12 @@ private:
   ros::Publisher vel_pub_;
   ros::Publisher record_path_pub_;
   ros::Publisher cur_pose_pub_;
+  ros::Publisher normal_goal_pub_;
   ros::Publisher record_point_pub_;
   ros::Subscriber point_sub_;
   ros::Subscriber costmap_sub_;
   ros::Subscriber costmap_update_sub_;
+  ros::Subscriber traffic_goal_sub_;
   ros::ServiceServer task_srv_;
   ros::ServiceClient coverage_srv_;
 
@@ -142,5 +152,7 @@ private:
 
   std::shared_ptr<costmap_2d::Costmap2D> costmap_;
   static uint8_t* cost_translation_;
+
+  std::shared_ptr<HalfStructPlanner> half_struct_planner_;
 };
 }
