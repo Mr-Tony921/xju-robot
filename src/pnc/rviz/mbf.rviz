@@ -5,6 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Global Planner1
+        - /Global Planner1/Traffic Route1
         - /Robot1/TF1/Frames1
       Splitter Ratio: 0.6050959825515747
     Tree Height: 546
@@ -134,7 +136,7 @@ Visualization Manager:
           Marker Topic: /wf_marker
           Name: WFMarker
           Namespaces:
-            "": true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -226,6 +228,14 @@ Visualization Manager:
           Topic: /move_base_flex/global_costmap/costmap
           Unreliable: false
           Use Timestamp: false
+          Value: true
+        - Class: rviz/MarkerArray
+          Enabled: true
+          Marker Topic: /traffic_route
+          Name: Traffic Route
+          Namespaces:
+            {}
+          Queue Size: 100
           Value: true
       Enabled: true
       Name: Global Planner
@@ -397,7 +407,7 @@ Visualization Manager:
       X std deviation: 0.5
       Y std deviation: 0.5
     - Class: rviz/SetGoal
-      Topic: /move_base_simple/goal
+      Topic: /move_base_simple/traffic_goal
     - Class: rviz/PublishPoint
       Single click: false
       Topic: /clicked_point
@@ -442,4 +452,4 @@ Window Geometry:
     collapsed: true
   Width: 1215
   X: 616
-  Y: 0
+  Y: 27

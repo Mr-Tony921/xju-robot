@@ -1,5 +1,6 @@
 uint8 EXECUTE = 0
 uint8 RECORD = 1
+uint8 LOAD_TRAFFIC_ROUTE = 2
 
 uint8 START = 0
 uint8 PAUSE = 1
@@ -9,11 +10,13 @@ uint8 KEEP_TEACH = 1
 uint8 KEEP_COVER_ZZ = 2
 uint8 KEEP_COVER_BS = 3
 uint8 DISCARD = 4
+uint8 KEEP_TRAFFIC_ROUTE = 5 # only support two points for now
 
 uint8 type #EXECUTE RECORD
-uint8 command #START PAUSE STOP KEEP_TEACH KEEP_COVER DISCARD
+uint8 command #START PAUSE STOP KEEP_TEACH KEEP_COVER DISCARD KEEP_TRAFFIC_ROUTE
 string dir
 string path_name
+string map
 ---
 
 string message

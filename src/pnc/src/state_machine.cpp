@@ -25,6 +25,9 @@ StateMachine::StateMachine()
       cost_translation_[i] = static_cast<uint8_t>(i * 254 / 100);
     }
   }
+
+  half_struct_planner_ = std::make_shared<HalfStructPlanner>();
+  half_struct_planner_->init();
 }
 
 StateMachine::~StateMachine() {
@@ -36,10 +39,12 @@ void StateMachine::init() {
   vel_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
   record_path_pub_ = nh.advertise<nav_msgs::Path>("record_path", 1);
   record_point_pub_ = nh.advertise<geometry_msgs::PolygonStamped>("record_zone", 1);
+  normal_goal_pub_ = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
   cur_pose_pub_ = nh.advertise<geometry_msgs::PoseStamped>("current_pose", 1);
   point_sub_ = nh.subscribe(RVIZ_POINT, 1, &StateMachine::point_cb, this);
   costmap_sub_ = nh.subscribe(COSTMAP, 5, &StateMachine::costmap_cb, this);
   costmap_update_sub_ = nh.subscribe(COSTMAP_UPDATE, 5, &StateMachine::costmap_update_cb, this);
+  traffic_goal_sub_ = nh.subscribe<geometry_msgs::PoseStamped>("/move_base_simple/traffic_goal", 1, &StateMachine::traffic_goal_cb, this);
   task_srv_ = nh.advertiseService(TASK_SRV, &StateMachine::task_service, this);
   coverage_srv_ = nh.serviceClient<coverage_path_planner::GetPathInZone>("/xju_zone_path");
   ROS_ERROR_COND(!goto_ctrl_->waitForServer(ros::Duration(5.0)), "move base action not online!");
@@ -368,6 +373,24 @@ void StateMachine::costmap_update_cb(map_msgs::OccupancyGridUpdate::ConstPtr con
   }
 }
 
+void StateMachine::traffic_goal_cb(geometry_msgs::PoseStamped::ConstPtr const& msg) {
+  if (!half_struct_planner_ || !half_struct_planner_->is_traffic_plan()) {
+    normal_goal_pub_.publish(*msg);
+    return;
+  }
+
+  routes_.clear();
+  geometry_msgs::PoseStamped start, goal;
+  start.header.frame_id = "map";
+  start.header.stamp = ros::Time::now();
+  start.pose = robot_pose().value();
+  goal = *msg;
+  cur_route_ = half_struct_planner_->get_path(start, goal);
+  cur_state_ = StateValue::Run;
+  running_state_ = RunStateValue::Goto;
+  send_goto(cur_index_);
+}
+
 auto StateMachine::is_free(const geometry_msgs::PoseStamped& pose) const -> bool {
   auto cost = pose_cost(pose);
   return cost < 66;
@@ -603,10 +626,34 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
           record_points_.clear();
           return true;
         }
+        case xju_pnc::xju_task::Request::KEEP_TRAFFIC_ROUTE : {
+          auto map_path = "/home/tony/course_ws/xju-robot/map/" + req.map + "_traffic_route.txt";
+          if (!write_traffic_route(map_path, record_points_)) {
+            resp.message = "Write fie failed.";
+          } else {
+            resp.message = "Keep traffic route successful.";
+          }
+
+          record_path_.poses.clear();
+          record_points_.clear();
+          return true;
+        }
         default:
           ROS_ERROR("Illegal service command in record %d", req.command);
           break;
       }
+      return true;
+    }
+    case xju_pnc::xju_task::Request::LOAD_TRAFFIC_ROUTE: {
+      std::vector<std::pair<std::pair<double, double>, std::pair<double, double>>> lines;
+      auto map_path = "/home/tony/course_ws/xju-robot/map/" + req.map + "_traffic_route.txt";
+      if (!read_traffic_route(map_path, lines)) {
+        resp.message = "read file failed.";
+      } else {
+        resp.message = "read file successful, got " + std::to_string(lines.size()) + " lines";
+      }
+
+      half_struct_planner_->set_traffic_route(lines);
       return true;
     }
     default: {
@@ -709,5 +756,66 @@ auto StateMachine::read_file(std::string& file_path) -> bool {
   record_path_pub_.publish(record_path_); // for debug
   record_path_.poses.clear();
   return !routes_.empty();
+}
+
+auto StateMachine::write_traffic_route(std::string& file_path, std::vector<geometry_msgs::PointStamped> const& line) -> bool {
+  if (line.size() % 2 != 0) {
+    ROS_ERROR("%lu size of line points is record, currently not support.", line.size());
+    return false;
+  }
+
+  std::ofstream out(file_path.c_str(), std::ios_base::out | std::ios_base::app);
+  if (!out.is_open()) {
+    ROS_ERROR("Open file %s failed!", file_path.c_str());
+    return false;
+  }
+
+  for (auto i = 0; i < line.size(); i += 2) {
+    out << std::to_string(line[i].point.x) << " " << std::to_string(line[i].point.y)
+        << " === "
+        << std::to_string(line[i + 1].point.x) << " " << std::to_string(line[i + 1].point.y)
+        << "\n";
+  }
+
+  out.close();
+  return true;
+}
+
+auto StateMachine::read_traffic_route(std::string& file_path, lines_type& lines) -> bool {
+  using point_type = std::pair<double, double>;
+  using line_type = std::pair<point_type, point_type>;
+  std::ifstream in(file_path.c_str());
+  if (!in.is_open()) {
+    ROS_ERROR("Open file %s failed!", file_path.c_str());
+    return false;
+  }
+
+  point_type fp, bp;
+  line_type line;
+  std::string contend, temp;
+  std::vector<std::string> temps;
+  while (getline(in, contend)) {
+    temps.clear();
+    temp.clear();
+    for (auto const& c : contend) {
+      if (c != ' ' && c != '=') {
+        temp += c;
+      } else if (!temp.empty()) {
+        temps.emplace_back(temp);
+        temp.clear();
+      }
+    }
+    if (!temp.empty()) temps.emplace_back(temp);
+    if (temps.size() != 4) continue;
+    fp.first = std::stod(temps[0]);
+    fp.second = std::stod(temps[1]);
+    bp.first = std::stod(temps[2]);
+    bp.second = std::stod(temps[3]);
+    line.first = fp;
+    line.second = bp;
+    lines.emplace_back(line);
+  }
+
+  return !lines.empty();
 }
 }

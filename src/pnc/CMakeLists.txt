@@ -52,7 +52,8 @@ target_link_libraries(xju_mbf_bridge ${catkin_LIBRARIES})
 
 add_executable(xju_state_machine
         node/state_machine_node.cpp
-        src/state_machine.cpp)
+        src/state_machine.cpp
+        src/half_struct_planner.cpp)
 add_dependencies(xju_state_machine ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(xju_state_machine ${catkin_LIBRARIES})
 
