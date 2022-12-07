@@ -36,7 +36,6 @@ constexpr static const int PATH_SAFE_DIS_NUM = 1.3 / RECORD_PATH_LEN_DENS; // 1.
 
 using GotoCtrl = actionlib::SimpleActionClient<mbf_msgs::MoveBaseAction>;
 using ExeCtrl = actionlib::SimpleActionClient<mbf_msgs::ExePathAction>;
-using lines_type = std::vector<std::pair<std::pair<double, double>, std::pair<double, double>>>;
 
 enum class StateValue : uint8_t {
   Idle = 0,

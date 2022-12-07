@@ -379,13 +379,30 @@ void StateMachine::traffic_goal_cb(geometry_msgs::PoseStamped::ConstPtr const& m
     return;
   }
 
+  half_struct_planner_->set_costmap(costmap_);
   routes_.clear();
   geometry_msgs::PoseStamped start, goal;
   start.header.frame_id = "map";
   start.header.stamp = ros::Time::now();
   start.pose = robot_pose().value();
   goal = *msg;
-  cur_route_ = half_struct_planner_->get_path(start, goal);
+  auto poses = half_struct_planner_->get_path(start, goal);
+  if (poses.empty()) {
+    ROS_ERROR("Traffic path not found!");
+    return;
+  }
+
+  nav_msgs::Path path;
+  path.header.frame_id = "map";
+  path.poses.resize(1);
+  for (auto const& pose : poses) {
+    path.poses.front() = pose;
+    routes_.emplace_back(path);
+  }
+
+  cur_route_ = routes_.front();
+  routes_.erase(routes_.begin());
+  cur_index_ = 0;
   cur_state_ = StateValue::Run;
   running_state_ = RunStateValue::Goto;
   send_goto(cur_index_);
@@ -645,7 +662,7 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
       return true;
     }
     case xju_pnc::xju_task::Request::LOAD_TRAFFIC_ROUTE: {
-      std::vector<std::pair<std::pair<double, double>, std::pair<double, double>>> lines;
+      lines_type lines;
       auto map_path = "/home/tony/course_ws/xju-robot/map/" + req.map + "_traffic_route.txt";
       if (!read_traffic_route(map_path, lines)) {
         resp.message = "read file failed.";
@@ -782,16 +799,13 @@ auto StateMachine::write_traffic_route(std::string& file_path, std::vector<geome
 }
 
 auto StateMachine::read_traffic_route(std::string& file_path, lines_type& lines) -> bool {
-  using point_type = std::pair<double, double>;
-  using line_type = std::pair<point_type, point_type>;
   std::ifstream in(file_path.c_str());
   if (!in.is_open()) {
     ROS_ERROR("Open file %s failed!", file_path.c_str());
     return false;
   }
 
-  point_type fp, bp;
-  line_type line;
+  line_t line;
   std::string contend, temp;
   std::vector<std::string> temps;
   while (getline(in, contend)) {
@@ -806,13 +820,15 @@ auto StateMachine::read_traffic_route(std::string& file_path, lines_type& lines)
       }
     }
     if (!temp.empty()) temps.emplace_back(temp);
-    if (temps.size() != 4) continue;
-    fp.first = std::stod(temps[0]);
-    fp.second = std::stod(temps[1]);
-    bp.first = std::stod(temps[2]);
-    bp.second = std::stod(temps[3]);
-    line.first = fp;
-    line.second = bp;
+    if (temps.size() < 4) continue;
+    line.a.x = std::stod(temps[0]);
+    line.a.y = std::stod(temps[1]);
+    line.b.x = std::stod(temps[2]);
+    line.b.y = std::stod(temps[3]);
+    line.go_list.clear();
+    for (auto i = 4; i < temps.size(); ++i) {
+      line.go_list.emplace_back(std::stoi(temps[i]));
+    }
     lines.emplace_back(line);
   }
 
