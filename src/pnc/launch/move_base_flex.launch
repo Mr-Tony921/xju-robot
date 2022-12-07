@@ -25,7 +25,7 @@
     <node pkg="xju_pnc" type="xju_mbf_bridge" respawn="false" name="xju_mbf_bridge" />
 
     <!-- state machine -->
-    <node pkg="xju_pnc" type="xju_state_machine" respawn="false" name="xju_state_machine" output="screen" />
+    <node pkg="xju_pnc" type="xju_state_machine" respawn="false" name="xju_state_machine" output="screen"/>
 
     <!-- coverage_path_planner -->
     <include file="$(find coverage_path_planner)/launch/path_planning.launch" />
