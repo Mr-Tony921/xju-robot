@@ -32,3 +32,6 @@ Video link:【XJU移动机器人仿真-第9期 全覆盖路径（Coverage path p
 
 Class 10: Wall follow controller.<br>
 Video link:【XJU移动机器人仿真-第10期 沿边控制（1D navigation）】 https://www.bilibili.com/video/BV1cd4y1t7LJ/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 11: Half struct planner.<br>
+Video link:【XJU移动机器人仿真-第11期 半结构化道路（交通规则/单行/路网）】 https://www.bilibili.com/video/BV1644y1m7vf/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
