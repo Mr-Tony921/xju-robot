@@ -27,4 +27,5 @@ catkin_package(
 include_directories(${catkin_INCLUDE_DIRS} include/${PROJECT_NAME})
 
 add_library(keep_out_layer src/keep_out_layer.cpp)
+add_dependencies(keep_out_layer ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(keep_out_layer ${catkin_LIBRARIES})
