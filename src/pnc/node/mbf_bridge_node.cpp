@@ -4,7 +4,7 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
-#include "costmap_plugins/keepOutZone.h"
+#include "costmap_2d/keepOutZone.h"
 #include "mbf_msgs/MoveBaseAction.h"
 
 namespace xju::pnc {
@@ -20,9 +20,9 @@ public:
     goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1, boost::bind(&MbfBridge::goalCB, this, _1));
     ros::NodeHandle nh("/");
     keep_out_zone_srv_ = nh.advertiseService("xju_zone", &MbfBridge::keepOutZoneSrv, this);
-    local_keep_out_ = nh.serviceClient<costmap_plugins::keepOutZone>(
+    local_keep_out_ = nh.serviceClient<costmap_2d::keepOutZone>(
       "/move_base_flex/local_costmap/keep_out_layer/xju_zone");
-    global_keep_out_ = nh.serviceClient<costmap_plugins::keepOutZone>(
+    global_keep_out_ = nh.serviceClient<costmap_2d::keepOutZone>(
       "/move_base_flex/global_costmap/keep_out_layer/xju_zone");
   }
 
@@ -38,9 +38,9 @@ private:
     action_goal_pub_.publish(action_goal);
   }
 
-  bool keepOutZoneSrv(costmap_plugins::keepOutZone::Request& req,
-                      costmap_plugins::keepOutZone::Response& res) {
-    costmap_plugins::keepOutZone r{};
+  bool keepOutZoneSrv(costmap_2d::keepOutZone::Request& req,
+                      costmap_2d::keepOutZone::Response& res) {
+    costmap_2d::keepOutZone r{};
     r.request = req;
     ROS_ERROR_COND(!local_keep_out_.call(r), "Local costmap call keep out srv failed!");
     ROS_INFO("local return id %d", r.response.id);

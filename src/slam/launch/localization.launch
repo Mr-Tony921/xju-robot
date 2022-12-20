@@ -1,5 +1,5 @@
 <launch>
-    <arg name="map" default="$(find xju_slam)/../../map/traffic.yaml"/>
+    <arg name="map" default="$(find xju_slam)/../../map/simple.yaml"/>
     <arg name="rviz" default="true"/>
 
     <param name="use_sim_time" value="true"/>
