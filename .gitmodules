@@ -8,8 +8,8 @@
         branch = melodic-devel
 [submodule "src/thirdparty/navigation"]
 	path = src/thirdparty/navigation
-	url = https://github.com/ros-planning/navigation.git
-	branch = melodic-devel
+	url = https://github.com/Mr-Tony921/navigation.git
+	branch = xju-costmap
 [submodule "src/thirdparty/teb_local_planner"]
 	path = src/thirdparty/teb_local_planner
 	url = https://github.com/rst-tu-dortmund/teb_local_planner.git
