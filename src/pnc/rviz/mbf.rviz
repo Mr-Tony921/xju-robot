@@ -263,8 +263,7 @@ Visualization Manager:
           Marker Topic: /traffic_route
           Name: Traffic Route
           Namespaces:
-            arrow: true
-            text: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -274,66 +273,18 @@ Visualization Manager:
         - Alpha: 1
           Class: rviz/RobotModel
           Collision Enabled: false
-          Enabled: true
+          Enabled: false
           Links:
             All Links Enabled: true
             Expand Joint Details: false
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            camera_front_base:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            camera_front_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            front_wheel_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            laser_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            left_wheel_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            pic_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            right_wheel_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            universal_wheel_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: robot_description
           TF Prefix: ""
           Update Interval: 0
-          Value: true
+          Value: false
           Visual Enabled: true
         - Alpha: 1
           Class: rviz/Polygon
@@ -508,26 +459,21 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/ThirdPersonFollower
-      Distance: 35.27565002441406
+      Angle: 0
+      Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Focal Point:
-        X: 4.159525394439697
-        Y: -10.337481498718262
-        Z: -1.9073486328125e-6
-      Focal Shape Fixed Size: true
-      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.9197973012924194
+      Scale: 38.95976638793945
       Target Frame: <Fixed Frame>
-      Value: ThirdPersonFollower (rviz)
-      Yaw: 4.995449066162109
+      Value: TopDownOrtho (rviz)
+      X: 3.0321719646453857
+      Y: 3.646254301071167
     Saved: ~
 Window Geometry:
   Displays:
@@ -545,5 +491,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1215
-  X: 616
-  Y: 0
+  X: 2225
+  Y: 91
