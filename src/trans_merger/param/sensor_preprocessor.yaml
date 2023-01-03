@@ -1,0 +1,95 @@
+check_range: 4       # density filter range
+cluster_dist: 0.5    # noise filter range
+
+# clear_itself
+# filter_noise_density_num
+# filter_noise_projection_area_dist
+
+filter:
+  topics: [ /scan_gnd, /tof_gnd, /scan_lds, /front_lds, /left_lds, /right_lds, /back_lds, /cliff_lds ]
+  scan_gnd:
+    input:
+      pcl_topic: /lds_dn20_obs_cloud
+    output:
+      frame: laser
+      clear_itself: [ 1.73, 4.91 ]
+      filter_noise_density_num: 2
+      pcl_params: [ -1.0, 0.3, 1.73, 4.91, 0.1, 1.5, 0.0087, 0.08 ]
+      # relative to base_link
+      # height min, height max, angle min, angle max, range min, range max, angle_inc, scan_time
+
+  tof_gnd:
+    input:
+      pcl_topic: /tof_front_obs_cloud
+    output:
+      frame: tof_front_base
+      clear_itself: [ -0.61, 0.61 ]
+      filter_noise_density_num: 4
+      pcl_params: [ -0.83, -0.16, -1.3, 1.3, 0.1, 4.5, 0.006, 0.2 ]
+
+  scan_lds:
+    input:
+      lds_topic: /scan
+    output:
+      frame: laser
+      filter_noise_density_num: 3
+      pcl_params: [ 0.0, 1.0, 1.57, 5.07, 0.1, 7.5, 0.0044, 0.08 ]
+
+  camera_lds:
+    input:
+      pcl_topic: /camera/stereo/depth/point_cloud
+    output:
+      frame: camera_base
+      filter_noise_density_num: 3
+      pcl_params: [ -0.56, 0.24, -1.05, 1.05, 0.1, 8.0, 0.0044, 0.1 ]
+
+  front_lds:
+    input:
+      pcl_topic: /camera/tof/front/point_cloud
+    output:
+      frame: tof_front_base
+      clear_itself: [ -0.96, 0.96 ]
+      filter_noise_density_num: 3
+      filter_noise_projection_area_dist: 0.3
+      pcl_params: [ -0.16, 0.68, -1.05, 1.05, 0.05, 6.5, 0.006, 0.2 ]
+
+  left_lds:
+    input:
+      pcl_topic: /camera/tof/left/point_cloud
+    output:
+      frame: tof_left_base
+      clear_itself: [ -0.96, 0.96 ]
+      filter_noise_density_num: 3
+      filter_noise_projection_area_dist: 0.3
+      pcl_params: [ -0.56, 0.24, -1.05, 1.05, 0.05, 6.5, 0.006, 0.2 ]
+
+  right_lds:
+    input:
+      pcl_topic: /camera/tof/right/point_cloud
+    output:
+      frame: tof_right_base
+      clear_itself: [ -0.96, 0.96 ]
+      filter_noise_density_num: 3
+      filter_noise_projection_area_dist: 0.3
+      pcl_params: [ -0.56, 0.24, -1.05, 1.05, 0.05, 6.5, 0.006, 0.2 ]
+
+  back_lds:
+    input:
+      pcl_topic: /camera/tof/back/point_cloud
+    output:
+      frame: tof_back_base
+      clear_itself: [ -0.96, 0.96 ]
+      filter_noise_density_num: 3
+      pcl_params: [ -0.6, 0.24, -1.57, 1.57, 0.2, 6.5, 0.006, 0.2 ]
+
+  cliff_lds:
+    input:
+      pcl_topic: /cliff_obs_cloud
+    output:
+      passby: true
+      frame: map
+      avoid_speedbump: true
+      filter_obstacle_around_speedbump: true
+
+merger:
+  topics: [ ]

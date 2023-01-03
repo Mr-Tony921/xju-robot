@@ -1,0 +1,8 @@
+<launch>
+  <!-- ground detector -->
+  <include file="$(find ground_detector)/launch/ground_detector.launch"/>
+
+  <node pkg="sensor_preprocessor" name="sensor_preprocessor" type="sensor_preprocessor" required="true" output="screen">
+    <rosparam file="$(find sensor_preprocessor)/param/sensor_preprocessor.yaml" command="load"/>
+  </node>
+</launch>
