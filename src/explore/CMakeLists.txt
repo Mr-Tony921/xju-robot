@@ -51,3 +51,23 @@ add_executable(xju_explore
 )
 add_dependencies(xju_explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(xju_explore ${catkin_LIBRARIES} ${OpenCV_LIBS})
+
+#############
+## Install ##
+#############
+
+# install nodes
+install(TARGETS xju_explore
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+        )
+
+## Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+        FILES_MATCHING PATTERN "*.h"
+        )
+
+## Mark other files for installation (e.g. launch and bag files, etc.)
+install(DIRECTORY launch param rviz
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        )

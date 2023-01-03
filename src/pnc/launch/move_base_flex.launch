@@ -25,6 +25,7 @@
     <node pkg="xju_pnc" type="xju_mbf_bridge" respawn="false" name="xju_mbf_bridge" />
 
     <!-- state machine -->
+    <param name="/root_path" value="$(find xju_slam)" type="string"/>
     <node pkg="xju_pnc" type="xju_state_machine" respawn="false" name="xju_state_machine" output="screen"/>
 
     <!-- coverage_path_planner -->

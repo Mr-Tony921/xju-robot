@@ -28,3 +28,11 @@ add_executable(xju_relocation node/relocation.cpp)
 add_dependencies(xju_relocation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(xju_relocation ${catkin_LIBRARIES})
+
+install(TARGETS xju_relocation
+		DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+		)
+
+install(DIRECTORY launch param rviz map path
+		DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+		)

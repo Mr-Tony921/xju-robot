@@ -66,3 +66,23 @@ target_include_directories(path_planning_node PRIVATE
         ${OpenCV_INCLUDE_DIRS})
 # end build exec path_planning_node
 
+#############
+## Install ##
+#############
+## Mark executables and/or libraries for installation
+install(
+        TARGETS path_planning_node
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+## Mark cpp header files for installation
+install(
+        DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+## Mark other files for installation (e.g. launch and bag files, etc.)
+install(
+        DIRECTORY launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
