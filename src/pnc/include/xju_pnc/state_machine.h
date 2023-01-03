@@ -23,7 +23,6 @@
 
 namespace xju::pnc {
 constexpr static const char* NODE_NAME = "xju_state_machine";
-constexpr static const char* DEFAULT_DIR = "/home/tony/course_ws/path";
 constexpr static const char* RVIZ_POINT = "/clicked_point";
 constexpr static const char* COSTMAP = "/move_base_flex/global_costmap/costmap";
 constexpr static const char* COSTMAP_UPDATE = "/move_base_flex/global_costmap/costmap_updates";

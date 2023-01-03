@@ -486,6 +486,8 @@ void StateMachine::exe_done(const actionlib::SimpleClientGoalState& state,
 }
 
 auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_task::Response& resp) -> bool {
+  std::string root_path;
+  ROS_ERROR_COND(!ros::param::get("/root_path", root_path), "Get root path failed!");
   switch (req.type) {
     case xju_pnc::xju_task::Request::EXECUTE: {
       if (cur_state_ == StateValue::Record) {
@@ -527,8 +529,8 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
 
         reset();
         auto dir = req.dir;
-        if (dir == "") dir = DEFAULT_DIR;
-        file_path_ = dir + "/" +req.path_name;
+        if (dir == "") dir = root_path + "/path/";
+        file_path_ = dir + req.path_name;
         if (!check_file_exist(file_path_)) {
           resp.message = file_path_ + " not exist, ignore start command.";
           return true;
@@ -569,10 +571,10 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
 
           auto dir = req.dir;
           if (dir == "") {
-            dir = DEFAULT_DIR;
+            dir = root_path + "/path/";
           }
 
-          file_path_ = dir + "/" + name;
+          file_path_ = dir + name;
           if (check_file_exist(file_path_)) {
             resp.message = "File already exist, ignore this operation.";
             return true;
@@ -644,7 +646,8 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
           return true;
         }
         case xju_pnc::xju_task::Request::KEEP_TRAFFIC_ROUTE : {
-          auto map_path = "/home/tony/course_ws/xju-robot/map/" + req.map + "_traffic_route.txt";
+          auto dir = root_path + "/map/";
+          auto map_path = dir + req.map + "_traffic_route.txt";
           if (!write_traffic_route(map_path, record_points_)) {
             resp.message = "Write fie failed.";
           } else {
@@ -663,7 +666,8 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
     }
     case xju_pnc::xju_task::Request::LOAD_TRAFFIC_ROUTE: {
       lines_type lines;
-      auto map_path = "/home/tony/course_ws/xju-robot/map/" + req.map + "_traffic_route.txt";
+      auto dir = root_path + "/map/";
+      auto map_path = dir + req.map + "_traffic_route.txt";
       if (!read_traffic_route(map_path, lines)) {
         resp.message = "read file failed.";
       } else {

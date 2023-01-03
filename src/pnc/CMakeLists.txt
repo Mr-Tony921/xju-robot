@@ -59,3 +59,16 @@ add_executable(xju_wall_follow
         node/wall_follow_node.cpp)
 add_dependencies(xju_wall_follow ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(xju_wall_follow ${catkin_LIBRARIES})
+
+install(TARGETS xju_mbf_bridge xju_state_machine xju_wall_follow
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+        )
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+        FILES_MATCHING PATTERN "*.h"
+        )
+
+install(DIRECTORY launch param rviz
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        )
