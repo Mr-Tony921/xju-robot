@@ -35,3 +35,6 @@ Video link:【XJU移动机器人仿真-第10期 沿边控制（1D navigation）�
 
 Class 11: Half struct planner.<br>
 Video link:【XJU移动机器人仿真-第11期 半结构化道路（交通规则/单行/路网）】 https://www.bilibili.com/video/BV1644y1m7vf/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 12: Semantic costmap.<br>
+Video link:【XJU移动机器人仿真-第12期 语义（代价）地图（semantic costmap）】 https://www.bilibili.com/video/BV1jP411F7MN/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
