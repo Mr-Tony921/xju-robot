@@ -314,7 +314,43 @@
     <safety_controller
       k_velocity="0" />
   </joint>
-  
+
+  <link name="top_laser_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.02" radius="0.01" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <visual>
+      <origin
+        xyz="0 0 -0.06"
+        rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.1" radius="0.0033" />
+      </geometry>
+      <material name="red" />
+    </visual>
+  </link>
+  <joint
+    name="joint_top_ladar"
+    type="fixed">
+    <origin
+      xyz="0.1 0 0.61"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="top_laser_link" />
+    <axis
+      xyz="0 0 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
   <!-- Camera -->
   <link name="camera_front_base">
     <visual>
@@ -340,4 +376,77 @@
     <parent link="camera_front_base"/>
     <child link="camera_front_link"/>
   </joint>
+
+  <!-- Ultrasonic -->
+    <link name="ultra_left_front_link">
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+        <material name="red" />
+      </visual>
+    </link>
+    <joint name="ultra_left_front_joint" type="fixed">
+      <axis xyz="0 0 0" />
+      <origin xyz="0.3 0.195 0.1" rpy="0 0 0.7854"/>
+      <parent link="base_link"/>
+      <child link="ultra_left_front_link"/>
+    </joint>
+
+    <link name="ultra_left_back_link">
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+        <material name="red" />
+      </visual>
+    </link>
+    <joint name="ultra_left_back_joint" type="fixed">
+      <axis xyz="0 0 0" />
+      <origin xyz="-0.1 0.195 0.1" rpy="0 0 2.3562"/>
+      <parent link="base_link"/>
+      <child link="ultra_left_back_link"/>
+    </joint>
+
+    <link name="ultra_right_back_link">
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+        <material name="red" />
+      </visual>
+    </link>
+    <joint name="ultra_right_back_joint" type="fixed">
+      <axis xyz="0 0 0" />
+      <origin xyz="-0.1 -0.195 0.1" rpy="0 0 -2.3562"/>
+      <parent link="base_link"/>
+      <child link="ultra_right_back_link"/>
+    </joint>
+
+    <link name="ultra_right_front_link">
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+        <material name="red" />
+      </visual>
+    </link>
+    <joint name="ultra_right_front_joint" type="fixed">
+      <axis xyz="0 0 0" />
+      <origin xyz="0.3 -0.195 0.1" rpy="0 0 -0.7854"/>
+      <parent link="base_link"/>
+      <child link="ultra_right_front_link"/>
+    </joint>
 </robot>
