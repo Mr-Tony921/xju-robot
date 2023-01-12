@@ -119,7 +119,50 @@
       </plugin>
     </sensor>
   </gazebo>
-    
+
+  <gazebo reference="top_laser_link">
+    <material>Gazebo/Red</material>
+    <sensor type="ray" name="$xju-VLP16">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.141593</min_angle>
+            <max_angle>3.141593</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>16</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.261799</min_angle>
+            <max_angle>0.261799</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <max>30</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.01</mean>
+          <stddev>0.0</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_laser.so">
+        <topicName>vlp_points</topicName>
+        <frameName>top_laser_link</frameName>
+        <organize_cloud>false</organize_cloud>
+        <min_range>0.01</min_range>
+        <max_range>30</max_range>
+        <gaussianNoise>0.01</gaussianNoise>
+      </plugin>
+    </sensor>
+  </gazebo>
+
  <gazebo reference="camera_front_base">
     <material>Gazebo/Red</material>
   <sensor name="depth_camera_front" type="depth">
@@ -162,5 +205,161 @@
     </plugin>
   </sensor>
  </gazebo>
+
+  <gazebo reference="ultra_left_front_link">
+     <material>Gazebo/Red</material>
+     <sensor type="ray" name="ultra_left_front">
+       <pose>0 0 0 0 0 0</pose>
+       <visualize>false</visualize>
+       <update_rate>10</update_rate>
+       <ray>
+         <scan>
+            <horizontal>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </horizontal>
+            <vertical>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </vertical>
+         </scan>
+         <range>
+            <min>0.02</min>
+            <max>1.5</max>
+            <resolution>0.02</resolution>
+         </range>
+       </ray>
+       <plugin name="gazebo_ros_range" filename="libgazebo_ros_range.so">
+         <gaussianNoise>0.005</gaussianNoise>
+         <alwaysOn>true</alwaysOn>
+         <updateRate>10</updateRate>
+         <topicName>/ultra_left_front</topicName>
+         <frameName>/ultra_left_front_link</frameName>
+         <fov>0.5</fov>
+         <radiation>ultrasound</radiation>
+       </plugin>
+     </sensor>
+  </gazebo>
+
+  <gazebo reference="ultra_left_back_link">
+     <material>Gazebo/Red</material>
+     <sensor type="ray" name="ultra_left_back">
+       <pose>0 0 0 0 0 0</pose>
+       <visualize>false</visualize>
+       <update_rate>10</update_rate>
+       <ray>
+         <scan>
+            <horizontal>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </horizontal>
+            <vertical>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </vertical>
+         </scan>
+         <range>
+            <min>0.02</min>
+            <max>1.5</max>
+            <resolution>0.02</resolution>
+         </range>
+       </ray>
+       <plugin name="gazebo_ros_range" filename="libgazebo_ros_range.so">
+         <gaussianNoise>0.005</gaussianNoise>
+         <alwaysOn>true</alwaysOn>
+         <updateRate>10</updateRate>
+         <topicName>/ultra_left_back</topicName>
+         <frameName>/ultra_left_back_link</frameName>
+         <fov>0.5</fov>
+         <radiation>ultrasound</radiation>
+       </plugin>
+     </sensor>
+  </gazebo>
+
+  <gazebo reference="ultra_right_back_link">
+     <material>Gazebo/Red</material>
+     <sensor type="ray" name="ultra_right_back">
+       <pose>0 0 0 0 0 0</pose>
+       <visualize>false</visualize>
+       <update_rate>10</update_rate>
+       <ray>
+         <scan>
+            <horizontal>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </horizontal>
+            <vertical>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </vertical>
+         </scan>
+         <range>
+            <min>0.02</min>
+            <max>1.5</max>
+            <resolution>0.02</resolution>
+         </range>
+       </ray>
+       <plugin name="gazebo_ros_range" filename="libgazebo_ros_range.so">
+         <gaussianNoise>0.005</gaussianNoise>
+         <alwaysOn>true</alwaysOn>
+         <updateRate>10</updateRate>
+         <topicName>/ultra_right_back</topicName>
+         <frameName>/ultra_right_back_link</frameName>
+         <fov>0.5</fov>
+         <radiation>ultrasound</radiation>
+       </plugin>
+     </sensor>
+  </gazebo>
+
+  <gazebo reference="ultra_right_front_link">
+     <material>Gazebo/Red</material>
+     <sensor type="ray" name="ultra_right_front">
+       <pose>0 0 0 0 0 0</pose>
+       <visualize>false</visualize>
+       <update_rate>10</update_rate>
+       <ray>
+         <scan>
+            <horizontal>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </horizontal>
+            <vertical>
+               <samples>10</samples>
+               <resolution>1</resolution>
+               <min_angle>-0.1308</min_angle>
+               <max_angle>0.1308</max_angle>
+            </vertical>
+         </scan>
+         <range>
+            <min>0.02</min>
+            <max>1.5</max>
+            <resolution>0.02</resolution>
+         </range>
+       </ray>
+       <plugin name="gazebo_ros_range" filename="libgazebo_ros_range.so">
+         <gaussianNoise>0.005</gaussianNoise>
+         <alwaysOn>true</alwaysOn>
+         <updateRate>10</updateRate>
+         <topicName>/ultra_right_front</topicName>
+         <frameName>/ultra_right_front_link</frameName>
+         <fov>0.5</fov>
+         <radiation>ultrasound</radiation>
+       </plugin>
+     </sensor>
+  </gazebo>
 
 </robot>
