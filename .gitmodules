@@ -22,3 +22,7 @@
 	path = src/thirdparty/move_base_flex
 	url = https://github.com/magazino/move_base_flex.git
 	branch = melodic
+[submodule "src/thirdparty/LIO-SAM"]
+	path = src/thirdparty/LIO-SAM
+	url = https://github.com/Mr-Tony921/LIO-SAM.git
+	branch = xju-liosam
