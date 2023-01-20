@@ -1,0 +1,19 @@
+<launch>
+
+    <arg name="project" default="lio_sam"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="base_to_laser" args="-0.1 0 -0.61 0 0 0 /lidar_link /base_link 1000" />
+
+    <!-- Parameters -->
+    <rosparam file="$(find xju_slam)/param/lio_config.yaml" command="load" />
+
+    <!--- LOAM -->
+    <include file="$(find lio_sam)/launch/include/module_loam.launch" />
+
+    <!--- Run Navsat -->
+    <include file="$(find xju_slam)/launch/module_navsat.launch" />
+
+    <!--- Run Rviz-->
+    <include file="$(find lio_sam)/launch/include/module_rviz.launch" />
+
+</launch>
