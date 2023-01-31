@@ -11,4 +11,4 @@ src/CMakeLists.txt
 .catkin_tools
 *.tar.gz 
 .vscode
-
+*.grid

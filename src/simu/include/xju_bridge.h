@@ -15,6 +15,7 @@ constexpr static const char* NODE_NAME = "xju_bridge";
 constexpr static const char* CommandTopic = "/cmd_vel";
 constexpr static const char* FeedbackTopic = "/odom";
 constexpr static const char* FusionTopic = "/fusion_analysis";
+constexpr static const char* OdomTransform = "/odom_transform";
 constexpr static const double WheelSeparation = 0.35;
 constexpr static const double WheelRadius = 0.07;
 constexpr static const double TimerDuration = 0.2;
@@ -37,6 +38,7 @@ private:
 
 private:
   ros::Publisher fusion_analysis_pub_;
+  ros::Publisher odom_transform_pub_;
 
   ros::Subscriber control_sub_;
   ros::Subscriber feedback_sub_;
@@ -44,5 +46,6 @@ private:
   ros::Timer fusion_analysis_timer_;
 
   fu_msg pub_msg_;
+  geometry_msgs::TransformStamped ot_msg_;
 };
 }
