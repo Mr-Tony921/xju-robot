@@ -26,3 +26,6 @@
 	path = src/thirdparty/LIO-SAM
 	url = https://github.com/Mr-Tony921/LIO-SAM.git
 	branch = xju-liosam
+[submodule "src/thirdparty/amcl3d"]
+	path = src/thirdparty/amcl3d
+	url = https://github.com/fada-catec/amcl3d.git

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <param name="use_sim_time" value="true"/>
+
+  <!-- Visualization -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_slam)/rviz/amcl3d.rviz"/>
+
+  <include file="$(find xju_slam)/launch/amcl3d.launch">
+    <arg name="map_name_path"   value="$(find xju_slam)/map/simple.bt"/>
+    <arg name="init_x"          value="0.0"/>
+    <arg name="init_y"          value="0.0"/>
+    <arg name="init_z"          value="0.07"/>
+    <arg name="init_a"          value="0.0"/>
+    <arg name="num_particles"   value="600"/>
+    <arg name="alpha"           value="0.5"/>
+    <arg name="take_off_height" value="-1.0"/>
+  </include>
+
+</launch>

@@ -12,8 +12,9 @@ XjuBridge::~XjuBridge() {
 void XjuBridge::init() {
   ros::NodeHandle nh;
   fusion_analysis_pub_ = nh.advertise<fu_msg>(FusionTopic, 10);
+  odom_transform_pub_ = nh.advertise<geometry_msgs::TransformStamped>(OdomTransform, 10);
   control_sub_ = nh.subscribe(CommandTopic, 1, &XjuBridge::control_callback, this);
-  feedback_sub_ = nh.subscribe(FeedbackTopic, 1, &XjuBridge::feedback_callback, this);
+  feedback_sub_ = nh.subscribe(FeedbackTopic, 1, &XjuBridge::feedback_callback, this, ros::TransportHints().tcpNoDelay());
   fusion_analysis_timer_ = nh.createTimer(ros::Duration(TimerDuration), &XjuBridge::timer_callback, this);
 }
 
@@ -38,6 +39,13 @@ void XjuBridge::feedback_callback(const nav_msgs::Odometry::ConstPtr& msg) {
   pub_msg_.odom_pose.x = msg->pose.pose.position.x;
   pub_msg_.odom_pose.y = msg->pose.pose.position.y;
   pub_msg_.odom_pose.yaw = tf2::getYaw(msg->pose.pose.orientation);
+  ot_msg_.header = msg->header;
+  ot_msg_.child_frame_id = "base_link";
+  ot_msg_.transform.translation.x = msg->pose.pose.position.x;
+  ot_msg_.transform.translation.y = msg->pose.pose.position.y;
+  ot_msg_.transform.translation.z = msg->pose.pose.position.z;
+  ot_msg_.transform.rotation = msg->pose.pose.orientation;
+  odom_transform_pub_.publish(ot_msg_);
 }
 
 void XjuBridge::timer_callback(const ros::TimerEvent& e) {
