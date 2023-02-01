@@ -9,7 +9,6 @@
 [submodule "src/thirdparty/navigation"]
 	path = src/thirdparty/navigation
 	url = https://github.com/Mr-Tony921/navigation.git
-	branch = xju-costmap
 [submodule "src/thirdparty/teb_local_planner"]
 	path = src/thirdparty/teb_local_planner
 	url = https://github.com/rst-tu-dortmund/teb_local_planner.git
@@ -25,7 +24,6 @@
 [submodule "src/thirdparty/LIO-SAM"]
 	path = src/thirdparty/LIO-SAM
 	url = https://github.com/Mr-Tony921/LIO-SAM.git
-	branch = xju-liosam
 [submodule "src/thirdparty/amcl3d"]
 	path = src/thirdparty/amcl3d
-	url = https://github.com/fada-catec/amcl3d.git
+	url = https://github.com/Mr-Tony921/amcl3d.git
