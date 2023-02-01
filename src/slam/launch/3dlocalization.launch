@@ -1,13 +1,18 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="map2d" default="$(find xju_slam)/map/3dcomplex.yaml"/>
+  <arg name="map3d" default="$(find xju_slam)/map/complex.bt"/>
+  <arg name="rviz" default="true"/>
 
-  <param name="use_sim_time" value="true"/>
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg map2d)"/>
 
   <!-- Visualization -->
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_slam)/rviz/amcl3d.rviz"/>
+  <group if="$(arg rviz)">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_slam)/rviz/amcl3d.rviz"/>
+  </group>
 
   <include file="$(find xju_slam)/launch/amcl3d.launch">
-    <arg name="map_name_path"   value="$(find xju_slam)/map/simple.bt"/>
+    <arg name="map_name_path"   value="$(arg map3d)"/>
     <arg name="init_x"          value="0.0"/>
     <arg name="init_y"          value="0.0"/>
     <arg name="init_z"          value="0.07"/>
