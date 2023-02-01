@@ -10,7 +10,7 @@
   <arg name="alpha"/>
   <arg name="take_off_height"/>
 
-  <node pkg="amcl3d" type="amcl3d_node" name="amcl3d_node" output="screen">
+  <node pkg="amcl3d" type="amcl3d_node" name="amcl3d_node">
 
     <!-- Topics and frames -->
 

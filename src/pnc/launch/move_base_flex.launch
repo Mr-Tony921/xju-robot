@@ -6,7 +6,12 @@
     <arg name="pnc_rviz" default="true"/>
 
     <!-- amcl -->
-    <include file="$(find xju_slam)/launch/localization.launch">
+    <!--<include file="$(find xju_slam)/launch/localization.launch">
+        <arg name="rviz" value="$(arg localization_rviz)" />
+    </include>-->
+
+    <!-- amcl3d -->
+    <include file="$(find xju_slam)/launch/3dlocalization.launch">
         <arg name="rviz" value="$(arg localization_rviz)" />
     </include>
 
