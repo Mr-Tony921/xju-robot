@@ -12,3 +12,4 @@ src/CMakeLists.txt
 *.tar.gz 
 .vscode
 *.grid
+*/gazebo_plugins/
