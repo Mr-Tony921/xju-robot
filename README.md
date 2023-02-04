@@ -3,6 +3,9 @@ XJU robot project for algorithm teaching.<br>
 Code and teaching video are being revised and updated periodically.<br>
 Thanks for watching and please kindly leave a STAR for me.
 
+Class 14: 3d-mapping.<br>
+Video link:【XJU移动机器人仿真-第14期 三维建图（LIO-SAM）】 https://www.bilibili.com/video/BV1bd4y1n75Q/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 13: More sensors.<br>
 Video link:【XJU移动机器人仿真-第13期 多线雷达/超声（velodyne laser / ultrasonic）】 https://www.bilibili.com/video/BV13s4y1t7N9/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
