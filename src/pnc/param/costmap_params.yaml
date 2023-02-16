@@ -31,7 +31,7 @@ global_costmap:
 
   obstacle_layer:
     observation_sources: 3dscan 2dscan
-    3dscan: { sensor_frame: top_laser_link, data_type: PointCloud2, topic: vlp_points, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true,  min_obstacle_height: 0.07, max_obstacle_height: 0.7 }
+    3dscan: { sensor_frame: top_laser_link, data_type: PointCloud2, topic: vlp_points, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true,  min_obstacle_height: -0.54, max_obstacle_height: 0.1 }
     2dscan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true }
     track_unknown_space: false
     inflation_option: 3
