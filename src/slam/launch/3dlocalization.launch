@@ -16,7 +16,7 @@
     <arg name="map_name_path"   value="$(arg map3d)"/>
     <arg name="init_x"          value="0.0"/>
     <arg name="init_y"          value="0.0"/>
-    <arg name="init_z"          value="0.07"/>
+    <arg name="init_z"          value="-0.61"/>
     <arg name="init_a"          value="0.0"/>
     <arg name="num_particles"   value="600"/>
     <arg name="alpha"           value="0.5"/>
