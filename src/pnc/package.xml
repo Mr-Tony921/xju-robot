@@ -14,6 +14,7 @@
     <depend>costmap_2d</depend>
     <depend>coverage_path_planner</depend>
     <depend>mbf_msgs</depend>
+    <depend>gazebo_msgs</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>roscpp</depend>

@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
         actionlib_msgs
         costmap_2d
         coverage_path_planner
+        gazebo_msgs
         geometry_msgs
         message_generation
         mbf_msgs
@@ -31,6 +32,7 @@ catkin_package(CATKIN_DEPENDS
         actionlib_msgs
         costmap_2d
         coverage_path_planner
+        gazebo_msgs
         geometry_msgs
         message_runtime
         mbf_msgs
@@ -60,7 +62,12 @@ add_executable(xju_wall_follow
 add_dependencies(xju_wall_follow ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(xju_wall_follow ${catkin_LIBRARIES})
 
-install(TARGETS xju_mbf_bridge xju_state_machine xju_wall_follow
+add_executable(xju_doc_node
+        node/dynamic_objects_control_node.cpp)
+add_dependencies(xju_doc_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(xju_doc_node ${catkin_LIBRARIES})
+
+install(TARGETS xju_mbf_bridge xju_state_machine xju_wall_follow xju_doc_node
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
         )
 
