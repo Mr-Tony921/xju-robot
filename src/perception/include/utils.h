@@ -552,7 +552,8 @@ private:
       TrackingObject dd;
       dd = targets_[i].object_;
       dd.id = targets_[i].ukf_id_;
-      dd.velocity.linear.x = tv;
+      dd.velocity.linear.x = tv * std::cos(tyaw);
+      dd.velocity.linear.y = tv * std::sin(tyaw);
       dd.acceleration.linear.y = tyaw_rate;
       dd.velocity_reliable = targets_[i].is_stable_;
       dd.pose_reliable = targets_[i].is_stable_;
