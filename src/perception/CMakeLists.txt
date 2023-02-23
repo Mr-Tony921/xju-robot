@@ -29,3 +29,5 @@ target_link_libraries(xju_perception
         ${OpenCV_LIBRARIES})
 
 add_dependencies(xju_perception ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+install(TARGETS xju_perception DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
