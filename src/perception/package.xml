@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+    <name>xju_perception</name>
+    <version>0.0.1</version>
+    <description>Perception package for xju robot</description>
+    <maintainer email="tongronglei@163.com">Tony</maintainer>
+    <license>TODO</license>
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>message_generation</build_depend>
+    <build_depend>registration</build_depend>
+    <build_depend>pcl_ros</build_depend>
+    <build_depend>sensor_msgs</build_depend>
+    <build_depend>std_msgs</build_depend>
+    <build_depend>tf</build_depend>
+    <run_depend>message_runtime</run_depend>
+    <run_depend>registration</run_depend>
+    <run_depend>pcl_ros</run_depend>
+    <run_depend>sensor_msgs</run_depend>
+    <run_depend>std_msgs</run_depend>
+    <run_depend>tf</run_depend>
+
+</package>
