@@ -3,6 +3,9 @@ XJU robot project for algorithm teaching.<br>
 Code and teaching video are being revised and updated periodically.<br>
 Thanks for watching and please kindly leave a STAR for me.
 
+Class 17: general perception.<br>
+Video link:【XJU移动机器人仿真-第17期 通用感知框架】 https://www.bilibili.com/video/BV1Co4y1h7Bc/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 16: 3d-navigation.<br>
 Video link:【XJU移动机器人仿真-第16期 三维导航】 https://www.bilibili.com/video/BV1HY411D7i5/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
