@@ -1,0 +1,24 @@
+planners:
+  - name: SBPLLatticePlanner
+    type: SBPLLatticePlanner
+
+controllers:
+  - name: TebLocalPlannerROS
+    type: teb_local_planner/TebLocalPlannerROS
+
+planner_frequency: 0.0
+planner_patience: 3.0
+planner_max_retries: 1
+
+controller_frequency: 5.0
+controller_patience: 3.0
+controller_max_retries: 1
+
+recovery_enabled: true
+recovery_patience: 30.0
+
+oscillation_timeout: 10.0
+oscillation_distance: 0.2
+
+force_stop_at_goal: true
+controller_lock_costmap: false
