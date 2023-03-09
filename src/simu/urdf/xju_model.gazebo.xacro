@@ -41,7 +41,7 @@
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
       <odometrySource>world</odometrySource>
-      <publishOdomTF>false</publishOdomTF>
+      <publishOdomTF>true</publishOdomTF>
       <robotBaseFrame>base_link</robotBaseFrame>
       <publishWheelTF>false</publishWheelTF>
       <publishTf>true</publishTf>
