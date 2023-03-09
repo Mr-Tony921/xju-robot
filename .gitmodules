@@ -27,3 +27,7 @@
 [submodule "src/thirdparty/amcl3d"]
 	path = src/thirdparty/amcl3d
 	url = https://github.com/Mr-Tony921/amcl3d.git
+[submodule "src/thirdparty/navigation_experimental"]
+	path = src/thirdparty/navigation_experimental
+	url = https://github.com/ros-planning/navigation_experimental.git
+	branch = melodic-devel
