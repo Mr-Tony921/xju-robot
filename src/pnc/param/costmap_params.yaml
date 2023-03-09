@@ -31,7 +31,7 @@ global_costmap:
 
   obstacle_layer:
     observation_sources: 3dscan 2dscan
-    3dscan: { sensor_frame: top_laser_link, data_type: PointCloud2, topic: vlp_points, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true,  min_obstacle_height: -0.54, max_obstacle_height: 0.1 }
+    3dscan: { sensor_frame: top_laser_link, data_type: PointCloud2, topic: vlp_points, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true,  min_obstacle_height: 0, max_obstacle_height: 0.6 }
     2dscan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true }
     track_unknown_space: false
     inflation_option: 3
@@ -46,7 +46,7 @@ local_costmap:
     - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
     - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
 
-  global_frame: odom
+  global_frame: map
   robot_base_frame: base_link
   map_type: costmap
   footprint: [[0.3, 0.15], [0.25, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.25, -0.2], [0.3, -0.15]]
@@ -69,7 +69,7 @@ local_costmap:
 
   obstacle_layer:
     observation_sources: 3dscan 2dscan
-    3dscan: { sensor_frame: top_laser_link, data_type: PointCloud2, topic: vlp_points, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true, min_obstacle_height: 0.07, max_obstacle_height: 0.7 }
+    3dscan: { sensor_frame: top_laser_link, data_type: PointCloud2, topic: vlp_points, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true, min_obstacle_height: 0, max_obstacle_height: 0.6 }
     2dscan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true }
     track_unknown_space: false
     inflation_option: 3
