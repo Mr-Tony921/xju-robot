@@ -3,6 +3,9 @@ XJU robot project for algorithm teaching.<br>
 Code and teaching video are being revised and updated periodically.<br>
 Thanks for watching and please kindly leave a STAR for me.
 
+Class 19: sbpl-lattice-planner.<br>
+Video link:【XJU移动机器人仿真-第19期 SBPL LATTICE PLANNER】 https://www.bilibili.com/video/BV1i24y147fh/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 18: hdl-localization/tracking.<br>
 Video link:【XJU移动机器人仿真-第18期 HDL-LOCALIZATION/TRACKING】 https://www.bilibili.com/video/BV1jM4y1k7rv/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
