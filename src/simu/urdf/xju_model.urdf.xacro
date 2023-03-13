@@ -352,17 +352,7 @@
   </joint>
 
   <!-- Camera -->
-  <link name="camera_front_base">
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <box size="0.01 0.04 0.01" />
-      </geometry>
-      <material name="red" />
-    </visual>
-  </link>
+  <link name="camera_front_base"/>
   <joint name="camera_front_base_joint" type="fixed">
     <axis xyz="0 0 0" />
     <origin xyz="0.305 0 0.495" rpy="0 0.174 0"/>

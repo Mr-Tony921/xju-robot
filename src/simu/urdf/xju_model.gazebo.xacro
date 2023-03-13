@@ -166,17 +166,17 @@
  <gazebo reference="camera_front_base">
     <material>Gazebo/Red</material>
   <sensor name="depth_camera_front" type="depth">
-    <update_rate>2</update_rate>
+    <update_rate>10</update_rate>
     <camera>
       <horizontal_fov>1.2386</horizontal_fov>
       <image>
-        <width>320</width>
-        <height>200</height>
+        <width>1280</width>
+        <height>720</height>
         <format>R8G8B8</format>
       </image>
       <clip>
-        <near>0.3</near>
-        <far>3</far>
+        <near>0.1</near>
+        <far>5</far>
       </clip>
     </camera>
     <plugin name="camera_front_controller" filename="libgazebo_ros_openni_kinect.so">
