@@ -9,6 +9,7 @@
 #include <mutex>
 #include <nav_msgs/Path.h>
 #include <ros/ros.h>
+#include <sensor_msgs/Range.h>
 #include <tf2/utils.h>
 #include <tf2_ros/transform_listener.h>
 #include <vector>
@@ -86,6 +87,10 @@ private:
 
   void traffic_goal_cb(geometry_msgs::PoseStamped::ConstPtr const& msg);
 
+  void ultra_left_front_cb(sensor_msgs::Range::ConstPtr const& msg);
+
+  void ultra_right_front_cb(sensor_msgs::Range::ConstPtr const& msg);
+
   void point_cb(geometry_msgs::PointStampedConstPtr const& msg);
 
   auto is_free(const geometry_msgs::PoseStamped& pose) const -> bool;
@@ -129,6 +134,8 @@ private:
   ros::Subscriber costmap_sub_;
   ros::Subscriber costmap_update_sub_;
   ros::Subscriber traffic_goal_sub_;
+  ros::Subscriber ultra_left_front_sub_;
+  ros::Subscriber ultra_right_front_sub_;
   ros::ServiceServer task_srv_;
   ros::ServiceClient coverage_srv_;
 
@@ -145,6 +152,7 @@ private:
   size_t obs_index_;
   nav_msgs::Path cur_route_;
   std::list<nav_msgs::Path> routes_;
+  double left_d_, right_d_;
 
   std::mutex map_update_mutex_;
 

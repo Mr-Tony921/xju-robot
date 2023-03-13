@@ -45,6 +45,8 @@ void StateMachine::init() {
   costmap_sub_ = nh.subscribe(COSTMAP, 5, &StateMachine::costmap_cb, this);
   costmap_update_sub_ = nh.subscribe(COSTMAP_UPDATE, 5, &StateMachine::costmap_update_cb, this);
   traffic_goal_sub_ = nh.subscribe<geometry_msgs::PoseStamped>("/move_base_simple/traffic_goal", 1, &StateMachine::traffic_goal_cb, this);
+  ultra_left_front_sub_ = nh.subscribe<sensor_msgs::Range>("/ultra_left_front", 1, &StateMachine::ultra_left_front_cb, this);
+  ultra_right_front_sub_ = nh.subscribe<sensor_msgs::Range>("/ultra_right_front", 1, &StateMachine::ultra_right_front_cb, this);
   task_srv_ = nh.advertiseService(TASK_SRV, &StateMachine::task_service, this);
   coverage_srv_ = nh.serviceClient<coverage_path_planner::GetPathInZone>("/xju_zone_path");
   ROS_ERROR_COND(!goto_ctrl_->waitForServer(ros::Duration(5.0)), "move base action not online!");
@@ -408,6 +410,15 @@ void StateMachine::traffic_goal_cb(geometry_msgs::PoseStamped::ConstPtr const& m
   send_goto(cur_index_);
 }
 
+void StateMachine::ultra_left_front_cb(sensor_msgs::Range::ConstPtr const& msg) {
+  left_d_ = msg->range;
+}
+
+
+void StateMachine::ultra_right_front_cb(sensor_msgs::Range::ConstPtr const& msg) {
+  right_d_ = msg->range;
+}
+
 auto StateMachine::is_free(const geometry_msgs::PoseStamped& pose) const -> bool {
   auto cost = pose_cost(pose);
   return cost < 66;
@@ -649,7 +660,7 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
           auto dir = root_path + "/map/";
           auto map_path = dir + req.map + "_traffic_route.txt";
           if (!write_traffic_route(map_path, record_points_)) {
-            resp.message = "Write fie failed.";
+            resp.message = "Write file failed.";
           } else {
             resp.message = "Keep traffic route successful.";
           }
@@ -676,6 +687,66 @@ auto StateMachine::task_service(xju_pnc::xju_task::Request& req, xju_pnc::xju_ta
 
       half_struct_planner_->set_traffic_route(lines);
       return true;
+    }
+    case xju_pnc::xju_task::Request::QR_NAV: {
+      using goalState = actionlib::SimpleClientGoalState;
+      const std::string qr_frame = "ar_marker_8";
+      const double qr_dis = 1.0;
+      const double ultra_dis = 0.1;
+      geometry_msgs::TransformStamped transformStamped;
+      try {
+        transformStamped = tf_->lookupTransform("map", qr_frame, ros::Time(0));
+      } catch (tf2::TransformException &ex) {
+        ROS_WARN("[QR_NAV] tf error: %s", ex.what());
+        resp.message = "cannot find QR code.";
+        return true;
+      }
+
+      geometry_msgs::PoseStamped target;
+      target.header.frame_id = "map";
+      tf2::Quaternion q_ori, q_rot, q_new;
+      q_ori.setX(transformStamped.transform.rotation.x);
+      q_ori.setY(transformStamped.transform.rotation.y);
+      q_ori.setZ(transformStamped.transform.rotation.z);
+      q_ori.setW(transformStamped.transform.rotation.w);
+      q_rot.setRPY(-M_PI_2, 0.0, M_PI_2);
+      q_new = q_rot * q_ori;
+      q_new.normalize();
+      tf2::convert(q_new, target.pose.orientation);
+      tf2::Matrix3x3 m(q_new);
+      double rr, pp, yy;
+      m.getRPY(rr, pp, yy);
+      target.pose.position.x = transformStamped.transform.translation.x + qr_dis * std::cos(yy + M_PI);
+      target.pose.position.y = transformStamped.transform.translation.y + qr_dis * std::sin(yy + M_PI);
+
+      mbf_msgs::MoveBaseGoal goal{};
+      goal.target_pose = target;
+      goto_ctrl_->sendGoal(goal,
+                           boost::bind(&StateMachine::goto_done, this, _1, _2),
+                           GotoCtrl::SimpleActiveCallback(),
+                           GotoCtrl::SimpleFeedbackCallback());
+
+      while(!goto_ctrl_->getState().isDone()) sleep(1);
+
+      if (goto_ctrl_->getState() != goalState::SUCCEEDED) {
+        resp.message = "Go nearby failed.";
+        return true;
+      }
+
+      left_d_ = std::numeric_limits<double>::max();
+      right_d_ = std::numeric_limits<double>::max();
+
+      while (left_d_ > ultra_dis || right_d_ > ultra_dis) {
+        ros::spinOnce();
+        geometry_msgs::Twist vel;
+        vel.linear.x = 0.1;
+        vel.angular.z = (left_d_ - right_d_) > 0.2 ? -0.1 : (right_d_ - left_d_) > 0.2 ? 0.1 : 0.0;
+        vel_pub_.publish(vel);
+      }
+      pub_zero_vel();
+      resp.message = "Back to QR success!";
+      return true;
+
     }
     default: {
       ROS_ERROR("Illegal service type %d", req.type);
