@@ -31,3 +31,6 @@
 	path = src/thirdparty/navigation_experimental
 	url = https://github.com/ros-planning/navigation_experimental.git
 	branch = melodic-devel
+[submodule "src/thirdparty/ar_track_alvar"]
+	path = src/thirdparty/ar_track_alvar
+	url = https://github.com/ros-perception/ar_track_alvar.git
