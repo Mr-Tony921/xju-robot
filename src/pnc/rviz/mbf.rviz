@@ -6,9 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /Global Planner1/GlobalPath1
+        - /Robot1
         - /Robot1/TF1
         - /Robot1/TF1/Frames1
-        - /Axes1
       Splitter Ratio: 0.6050959825515747
     Tree Height: 352
   - Class: rviz/Selection
@@ -29,7 +29,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: Camera
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -314,7 +314,6 @@ Visualization Manager:
               Alpha: 1
               Show Axes: false
               Show Trail: false
-              Value: true
             camera_front_link:
               Alpha: 1
               Show Axes: false
@@ -422,6 +421,26 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: true
           Value: false
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz/Range
+          Color: 255; 255; 255
+          Enabled: true
+          Name: LeftFront
+          Queue Size: 100
+          Topic: /ultra_left_front
+          Unreliable: false
+          Value: true
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz/Range
+          Color: 255; 255; 255
+          Enabled: true
+          Name: RightFront
+          Queue Size: 100
+          Topic: /ultra_right_front
+          Unreliable: false
+          Value: true
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -668,7 +687,9 @@ Visualization Manager:
           AMCL Particles: true
           AMCL3DScan: true
           LaserScan: true
+          LeftFront: true
           Odometry: true
+          RightFront: true
           Robot Footprint: true
           RobotModel: true
           TF: true
@@ -710,25 +731,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 5.274086952209473
+      Distance: 29.297164916992188
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 7.471235752105713
-        Y: 8.636343955993652
+        X: 6.819253444671631
+        Y: 8.176711082458496
         Z: 2.1989699234836735e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4197971522808075
+      Pitch: 0.27479708194732666
       Target Frame: <Fixed Frame>
       Value: ThirdPersonFollower (rviz)
-      Yaw: 4.600427627563477
+      Yaw: 4.750429630279541
     Saved: ~
 Window Geometry:
   Camera:
