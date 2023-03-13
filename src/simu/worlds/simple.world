@@ -80,6 +80,43 @@
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
+    <model name='table_8_9_10'>
+      <static>true</static>
+      <link name='link'>
+        <pose>8.0 9.47 0.5 -1.57 1.57 0</pose>
+        <inertial>
+          <mass>0.390</mass>
+          <inertia>
+            <ixx>0.00058</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00058</iyy>
+            <iyz>0</iyz>
+            <izz>0.00019</izz>
+          </inertia>
+        </inertial>
+        <collision name='table_8_9_10'>
+          <geometry>
+             <box>
+               <size>0.112 0.112 0.01</size>
+             </box>
+          </geometry>
+        </collision>
+        <visual name='table_8_9_10'>
+          <geometry>
+             <box>
+               <size>0.112 0.112 0.01</size>
+             </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/table_8_9_10.material</uri>
+              <name>Gazebo/table_8_9_10</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
     <model name='lounge'>
       <pose frame=''>1.91507 2.98558 0 0 -0 0</pose>
       <link name='Stairs_0'>
