@@ -20,6 +20,8 @@ bash start.sh
 ```
 this will install dependencies and build the project
 
+or you can execute the command in ```start.sh``` one by one.
+
 and enjoy it.
 
 # xju-robot project
