@@ -3,6 +3,12 @@ XJU robot project for algorithm teaching.<br>
 Code and teaching video are being revised and updated periodically.<br>
 Thanks for watching and please kindly leave a STAR for me.
 
+Deploy<br>
+Video link:【小橘工程部署】 https://www.bilibili.com/video/BV19o4y1W7jC/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 21: ORB-SLAM.<br>
+Video link:【XJU移动机器人仿真-第21期 V-SLAM（ORB-SLAM）】 https://www.bilibili.com/video/BV1b24y177kq/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 20: QR code application.<br>
 Video link:【XJU移动机器人仿真-第20期 二维码应用（ar_track_alvar）】 https://www.bilibili.com/video/BV1Jo4y1q75W/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
