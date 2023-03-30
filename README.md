@@ -6,6 +6,9 @@ Thanks for watching and please kindly leave a STAR for me.
 Deploy<br>
 Video link:【小橘工程部署】 https://www.bilibili.com/video/BV19o4y1W7jC/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
+Class 22: RTAB-Map.<br>
+Video link:【XJU移动机器人仿真-第22期 RTAB-Map】 https://www.bilibili.com/video/BV1Ps4y1U7vT/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 21: ORB-SLAM.<br>
 Video link:【XJU移动机器人仿真-第21期 V-SLAM（ORB-SLAM）】 https://www.bilibili.com/video/BV1b24y177kq/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
