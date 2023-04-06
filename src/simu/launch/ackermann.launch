@@ -1,0 +1,24 @@
+<launch>
+  <arg name="x_pos" default="0.0"/>
+  <arg name="y_pos" default="0.0"/>
+  <arg name="z_pos" default="0.07"/>
+  <arg name="gui" default="true"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(find xju_simu)/urdf/xju_ackermann_model.urdf.xacro'"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find xju_simu)/worlds/simple.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"
+        args="-urdf -model xju -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+
+  <include file="$(find xju_simu)/launch/ackermann_control.launch" />
+
+  <rosparam command="load" file="$(find xju_simu)/param/ackermann_teleop_param.yaml" />
+  <node pkg="xju_simu" type="ackermann_teleop.py" name="ackermann_teleop" />
+
+</launch>

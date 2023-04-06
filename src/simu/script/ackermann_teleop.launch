@@ -1,0 +1,4 @@
+<launch>
+  <rosparam command="load" file="$(find xju_simu)/param/ackermann_teleop_param.yaml" />
+  <node pkg="xju_simu" type="ackermann_teleop.py" name="ackermann_teleop" required="true" />
+</launch>
