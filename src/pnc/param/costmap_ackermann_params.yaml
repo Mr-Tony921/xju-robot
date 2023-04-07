@@ -1,0 +1,77 @@
+global_costmap:
+  plugins:
+    - { name: static_layer,    type: "costmap_2d::StaticLayer" }
+    - { name: keep_out_layer,  type: "costmap_2d::KeepOutLayer" }
+    - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
+    - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
+
+  track_unknown_space: false
+  global_frame: map
+  robot_base_frame: base_link
+  map_type: costmap
+  footprint: [[0.33, 0.2], [-0.07, 0.2], [-0.07, -0.2], [0.33, -0.2]]
+  footprint_padding: 0.05
+
+  update_frequency: 2.0
+  publish_frequency: 1.0
+  transform_tolerance: 0.5
+
+  static_map: true
+  always_send_full_costmap: false
+  resolution: 0.05
+
+  static_layer:
+    map_topic: /map
+    track_unknown_space: false
+
+  keep_out_layer:
+    enabled: true
+    fill_zones: false
+    inflation_option: 3
+
+  obstacle_layer:
+    observation_sources: 2dscan
+    2dscan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true }
+    track_unknown_space: false
+    inflation_option: 3
+
+  inflation_layer:
+    inflation_radius: 0.36
+    cost_scaling_factor: 2.61
+
+local_costmap:
+  plugins:
+    - { name: keep_out_layer,  type: "costmap_2d::KeepOutLayer" }
+    - { name: obstacle_layer,  type: "costmap_2d::ObstacleLayer" }
+    - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
+
+  global_frame: map
+  robot_base_frame: base_link
+  map_type: costmap
+  footprint: [[0.33, 0.2], [-0.07, 0.2], [-0.07, -0.2], [0.33, -0.2]]
+  footprint_padding: 0.0
+
+  update_frequency: 5.0
+  publish_frequency: 1.0
+  transform_tolerance: 0.5
+
+  static_map: false
+  rolling_window: true
+  width: 6
+  height: 6
+  resolution: 0.05
+
+  keep_out_layer:
+    enabled: true
+    fill_zones: false
+    inflation_option: 3
+
+  obstacle_layer:
+    observation_sources: 2dscan
+    2dscan: { sensor_frame: laser_link, data_type: LaserScan, topic: scan, obstacle_range: 6.0, raytrace_range: 6.5, marking: true, clearing: true }
+    track_unknown_space: false
+    inflation_option: 3
+
+  inflation_layer:
+    inflation_radius: 0.36
+    cost_scaling_factor: 2.61
