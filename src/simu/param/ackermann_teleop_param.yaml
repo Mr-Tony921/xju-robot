@@ -1,3 +1,3 @@
 ackermann_teleop:
-  speed: 0.5
+  speed: 1.0
   max_steering_angle: 0.34
