@@ -5,7 +5,6 @@
 
   <node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
      output="screen" ns="/xju" args="left_rear_wheel_velocity_controller right_rear_wheel_velocity_controller
-                                     left_front_wheel_velocity_controller right_front_wheel_velocity_controller
                                      left_steering_hinge_position_controller right_steering_hinge_position_controller
                                      joint_state_controller"/>
 

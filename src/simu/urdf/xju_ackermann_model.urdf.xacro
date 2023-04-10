@@ -125,7 +125,6 @@
   </joint>
   <xacro:wheel_transmission name="left_front_wheel" />
 
-
   <link name="right_steering_hinge">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />

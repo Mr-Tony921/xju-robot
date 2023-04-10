@@ -16,11 +16,6 @@
   </gazebo>
 
   <gazebo reference="left_front_wheel">
-    <mu1 value="2.0"/>
-    <mu2 value="2.0"/>
-    <kp  value="10000000.0" />
-    <kd  value="1.0" />
-    <fdir1 value="0 0 1"/>
     <material>Gazebo/Black</material>
   </gazebo>
 
@@ -29,11 +24,6 @@
   </gazebo>
 
   <gazebo reference="right_front_wheel">
-    <mu1 value="2.0"/>
-    <mu2 value="2.0"/>
-    <kp  value="10000000.0" />
-    <kd  value="1.0" />
-    <fdir1 value="0 0 1"/>
     <material>Gazebo/Black</material>
   </gazebo>
 
