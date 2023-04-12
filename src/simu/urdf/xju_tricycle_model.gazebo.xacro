@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<robot name="xju" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="laser_visual" default="false"/>
+  <xacro:arg name="imu_visual"   default="false"/>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+  <gazebo reference="pic_link">
+    <material>Gazebo/face</material>
+  </gazebo>
+
+  <gazebo reference="front_steering_hinge">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="front_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="left_rear_wheel">
+    <mu1 value="2.0"/>
+    <mu2 value="2.0"/>
+    <kp  value="10000000.0" />
+    <kd  value="1.0" />
+    <fdir1 value="1 0 0"/>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="right_rear_wheel">
+    <mu1 value="2.0"/>
+    <mu2 value="2.0"/>
+    <kp  value="10000000.0" />
+    <kd  value="1.0" />
+    <fdir1 value="1 0 0"/>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="imu_link">
+    <sensor type="imu" name="imu">
+      <always_on>true</always_on>
+      <visualize>$(arg imu_visual)</visualize>
+    </sensor>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/xju</robotNamespace>
+      <robotParam>robot_description</robotParam>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <alwaysOn>true</alwaysOn>
+      <bodyName>imu_link</bodyName>
+      <frameName>imu_link</frameName>
+      <topicName>imu</topicName>
+      <serviceName>imu_service</serviceName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <updateRate>50</updateRate>
+      <imu>
+        <noise>
+          <type>gaussian</type>
+          <rate>
+            <mean>0.0</mean>
+            <stddev>2e-4</stddev>
+            <bias_mean>0.0000075</bias_mean>
+            <bias_stddev>0.0000008</bias_stddev>
+          </rate>
+          <accel>
+            <mean>0.0</mean>
+            <stddev>1.7e-2</stddev>
+            <bias_mean>0.01</bias_mean>
+            <bias_stddev>0.001</bias_stddev>
+          </accel>
+        </noise>
+      </imu>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="top_laser_link">
+    <material>Gazebo/Red</material>
+    <sensor type="ray" name="$xju-VLP16">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.141593</min_angle>
+            <max_angle>3.141593</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>16</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.261799</min_angle>
+            <max_angle>0.261799</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <max>30</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.01</mean>
+          <stddev>0.0</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_laser.so">
+        <topicName>vlp_points</topicName>
+        <frameName>top_laser_link</frameName>
+        <organize_cloud>false</organize_cloud>
+        <min_range>0.01</min_range>
+        <max_range>30</max_range>
+        <gaussianNoise>0.01</gaussianNoise>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>
