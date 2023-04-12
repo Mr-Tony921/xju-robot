@@ -13,14 +13,10 @@ xju:
     type: effort_controllers/JointVelocityController
     joint: right_rear_wheel_joint
     pid: {p: 1, i: 0.0, d: 0.0, i_clamp: 0.0}
-  left_front_wheel_velocity_controller:
+  front_wheel_velocity_controller:
     type: effort_controllers/JointVelocityController
-    joint: left_front_wheel_joint
-    pid: {p: 0.5, i: 0.0, d: 0.0, i_clamp: 0.0}
-  right_front_wheel_velocity_controller:
-    type: effort_controllers/JointVelocityController
-    joint: right_front_wheel_joint
-    pid: {p: 0.5, i: 0.0, d: 0.0, i_clamp: 0.0}
+    joint: front_wheel_joint
+    pid: {p: 1, i: 0.0, d: 0.0, i_clamp: 0.0}
 
   # Position Controllers ---位置控制器-----------------------
   left_steering_hinge_position_controller:
@@ -29,6 +25,10 @@ xju:
     pid: {p: 10.0, i: 0.0, d: 0.5}
   right_steering_hinge_position_controller:
     joint: right_steering_hinge_joint
+    type: effort_controllers/JointPositionController
+    pid: {p: 10.0, i: 0.0, d: 0.5}
+  front_steering_hinge_position_controller:
+    joint: front_steering_hinge_joint
     type: effort_controllers/JointPositionController
     pid: {p: 10.0, i: 0.0, d: 0.5}
 

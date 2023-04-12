@@ -1,0 +1,40 @@
+<launch>
+    <!-- Arguments -->
+    <arg name="cmd_vel_topic" default="/cmd_vel" />
+    <arg name="odom_topic" default="odom" />
+    <arg name="localization_rviz" default="false"/>
+    <arg name="pnc_rviz" default="true"/>
+
+    <!-- amcl3d -->
+    <include file="$(find xju_slam)/launch/3dlocalization.launch">
+        <arg name="rviz" value="$(arg localization_rviz)" />
+    </include>
+
+    <!-- move_base_flex -->
+    <node pkg="mbf_costmap_nav" type="mbf_costmap_nav" respawn="false" name="move_base_flex" output="screen">
+        <param name="SBPLLatticePlanner/primitive_filename" value="$(find xju_pnc)/param/xjureso005.mprim" />
+        <rosparam file="$(find xju_pnc)/param/costmap_ackermann_params.yaml" command="load" />
+        <rosparam file="$(find xju_pnc)/param/mbf_sbpl.yaml" command="load" />
+        <rosparam file="$(find xju_pnc)/param/sbpl_global_params.yaml" command="load" />
+        <rosparam file="$(find xju_pnc)/param/recovery_behavior_params.yaml" command="load" />
+        <rosparam file="$(find xju_pnc)/param/teb_ackermann.yaml" command="load" />
+        <rosparam file="$(find xju_pnc)/param/costmap_converter_params.yaml" command="load" />
+        <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+        <remap from="odom" to="$(arg odom_topic)"/>
+    </node>
+
+    <!-- action goal bridge -->
+    <node pkg="xju_pnc" type="xju_mbf_bridge" respawn="false" name="xju_mbf_bridge" />
+
+    <!-- state machine -->
+    <param name="/root_path" value="$(find xju_slam)" type="string"/>
+    <node pkg="xju_pnc" type="xju_state_machine" respawn="false" name="xju_state_machine" output="screen"/>
+
+    <!-- coverage_path_planner -->
+    <include file="$(find coverage_path_planner)/launch/path_planning.launch" />
+
+    <!-- rviz -->
+    <group if="$(arg pnc_rviz)">
+        <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_pnc)/rviz/mbf.rviz" />
+    </group>
+</launch>

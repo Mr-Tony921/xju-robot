@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+
+<launch>
+  <rosparam file="$(find xju_simu)/param/ackermann_control.yaml" command="load"/>
+
+  <node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
+     output="screen" ns="/xju" args="front_wheel_velocity_controller
+                                     front_steering_hinge_position_controller
+                                     joint_state_controller"/>
+
+  <node name= "robot_state_publisher" pkg= "robot_state_publisher" type= "robot_state_publisher">
+     <remap from="/joint_states" to="/xju/joint_states"/>
+  </node>
+
+  <node pkg="xju_simu" type="servo_commands.py" name="servo_commands" output="screen"/>
+
+  <node pkg="xju_simu" type="transform.py" name="transform" output="screen"/>
+
+  <node pkg="xju_simu" name="gazebo_odometry_node" type="gazebo_odometry.py"/>
+</launch>

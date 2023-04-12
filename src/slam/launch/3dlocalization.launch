@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="map2d" default="$(find xju_slam)/map/apartment.yaml"/>
-  <arg name="map3d" default="$(find xju_slam)/map/apartment.bt"/>
+  <arg name="map2d" default="$(find xju_slam)/map/3dsimple.yaml"/>
+  <arg name="map3d" default="$(find xju_slam)/map/simple.bt"/>
   <arg name="rviz" default="true"/>
 
   <node pkg="xju_slam" type="xju_relocation" name="xju_relocation" output="screen"/>
