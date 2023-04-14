@@ -6,6 +6,9 @@ Thanks for watching and please kindly leave a STAR for me.
 Deploy<br>
 Video link:【小橘工程部署】 https://www.bilibili.com/video/BV19o4y1W7jC/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
+Class 24: Tricycle model.<br>
+Video link:【XJU移动机器人仿真-第24期 三轮车模型（Tricycle Model）】 https://www.bilibili.com/video/BV1Ph411u7gn/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 23: Ackermann model.<br>
 Video link:【XJU移动机器人仿真-第23期 阿克曼模型（ros-control teb-local-planner ackermann-msgs）】 https://www.bilibili.com/video/BV1Zs4y1N78V/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
