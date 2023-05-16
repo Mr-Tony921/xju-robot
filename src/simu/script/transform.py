@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 import std_msgs.msg
 from ackermann_msgs.msg import AckermannDriveStamped

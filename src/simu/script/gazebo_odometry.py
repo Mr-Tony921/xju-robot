@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 This script makes Gazebo less fail by translating gazebo status messages to odometry data.
