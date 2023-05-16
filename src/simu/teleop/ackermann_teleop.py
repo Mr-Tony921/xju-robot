@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) 2019, The Personal Robotics Lab, The MuSHR Team, The Contributors of MuSHR
 # License: BSD 3-Clause. See LICENSE.md file in root directory.
@@ -7,7 +7,7 @@ import atexit
 import os
 import signal
 from threading import Lock
-from Tkinter import Frame, Label, Tk
+from tkinter import Frame, Label, Tk
 
 import rospy
 from ackermann_msgs.msg import AckermannDriveStamped

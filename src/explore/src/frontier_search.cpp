@@ -49,7 +49,7 @@ void FrontierSearch::find_frontier_point() {
     cv::Mat mid;
     cv::Canny(mat, mid, 200, 400, 3);
     std::vector<std::vector<cv::Point>> contours;
-    cv::findContours(mid, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    cv::findContours(mid, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
     for (auto iter = contours.begin(); iter < contours.end() - 1;) {
         if (cv::norm((iter + 1)->front() - iter->back()) < CONTOUR_LINE_MIN_GRID) {
             iter->insert(iter->end(), (iter + 1)->begin(), (iter + 1)->end());
