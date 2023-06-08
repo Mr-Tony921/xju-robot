@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="video_recorder" type="video_recorder" name="video_recorder">
+    <param name="video_duration" value="30"/>
+    <param name="video_fps" value="10.0"/>
+  </node>
+</launch>
