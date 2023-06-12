@@ -6,6 +6,15 @@ Thanks for watching and please kindly leave a STAR for me.
 Deploy<br>
 Video link:【小橘工程部署】 https://www.bilibili.com/video/BV19o4y1W7jC/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
+Class 27: Video recorder.<br>
+Video link:【小橘仿真[27] 行车记录仪】 https://www.bilibili.com/video/BV1Wu4y1o7dT/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 26: Perf optimization.<br>
+Video link:【小橘仿真[26] perf+火焰图性能优化】 https://www.bilibili.com/video/BV1vz4y1B7CW/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
+Class 25: Noetic code transplantation。<br>
+Video link:【小橘仿真[25] Noetic移植】 https://www.bilibili.com/video/BV1Rs4y1M7EU/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 24: Tricycle model.<br>
 Video link:【XJU移动机器人仿真-第24期 三轮车模型（Tricycle Model）】 https://www.bilibili.com/video/BV1Ph411u7gn/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
