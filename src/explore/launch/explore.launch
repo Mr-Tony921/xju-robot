@@ -6,10 +6,8 @@
   <arg name="cmd_vel_topic" default="/cmd_vel" />
   <arg name="odom_topic" default="/odom" />
 
-  <!-- Gmapping -->
-  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping">
-    <rosparam file="$(find xju_slam)/param/gmapping_params.yaml" command="load" />
-  </node>
+  <!-- Cartographer -->
+  <include file="$(find xju_slam)/launch/carto.launch"/>
 
   <!-- Move base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base">
@@ -26,5 +24,5 @@
   <node pkg="xju_explore" type="xju_explore" respawn="false" name="xju_explore" required="false" output="screen" />
 
   <!-- Rviz -->
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_explore)/rviz/explore.rviz" />
+  <!--node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_explore)/rviz/explore.rviz" /-->
 </launch>

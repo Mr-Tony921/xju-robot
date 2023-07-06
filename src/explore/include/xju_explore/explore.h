@@ -20,7 +20,7 @@ constexpr static const double ANGULAR_SPEED = 0.3;
 constexpr static const double CONTROL_FREQ = 5.0;
 constexpr static const double WAIT_TIMEOUT = 10.0;
 constexpr static const double DIST_RESO = 2.0;
-constexpr static const char* MAP = "map";
+constexpr static const char* MAP = "carto_map";
 
 class Explore {
    public:

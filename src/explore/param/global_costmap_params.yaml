@@ -5,7 +5,7 @@ global_costmap:
     - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
 
   track_unknown_space: false
-  global_frame: map
+  global_frame: carto_map
   robot_base_frame: base_link
   map_type: costmap
   footprint: [[0.3, 0.15], [0.25, 0.2], [-0.1, 0.2], [-0.1, -0.2], [0.25, -0.2], [0.3, -0.15]]
@@ -17,7 +17,7 @@ global_costmap:
 
   static_map: true
   always_send_full_costmap: false
-  resolution: 0.05
+  resolution: 0.1
 
   static_layer:
     use_maximum: true

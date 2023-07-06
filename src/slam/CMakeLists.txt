@@ -8,9 +8,12 @@ find_package(catkin REQUIRED COMPONENTS
 		roscpp
 		roslaunch
 		sensor_msgs
+		tf
 		tf2
 		tf2_ros
 		)
+find_package(OpenCV REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 catkin_package(CATKIN_DEPENDS
 		geometry_msgs
@@ -29,7 +32,16 @@ add_dependencies(xju_relocation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXP
 
 target_link_libraries(xju_relocation ${catkin_LIBRARIES})
 
-install(TARGETS xju_relocation
+add_executable(rotate_map node/rotate_map.cpp)
+
+add_dependencies(rotate_map ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(rotate_map ${catkin_LIBRARIES} ${OpenCV_LIBS})
+target_include_directories(rotate_map PRIVATE
+                           include
+                           ${catkin_INCLUDE_DIRS}
+                           ${OpenCV_INCLUDE_DIRS})
+
+install(TARGETS xju_relocation rotate_map
 		DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 		)
 
