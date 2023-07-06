@@ -1,0 +1,16 @@
+<launch>
+    <node name="cartographer_node" pkg="cartographer_ros" type="cartographer_node"
+          args="-configuration_directory $(find xju_slam)/param
+                -configuration_basename xju_carto_2d.lua">
+        <remap from="echoes" to="horizontal_laser_2d" />
+    </node>
+
+    <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+          type="cartographer_occupancy_grid_node" args="-resolution 0.1">
+        <remap from="map"    to="carto_map" />
+    </node>
+
+    <node name="rotate_map_node" pkg="xju_slam" type="rotate_map" respawn="true" />
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_slam)/rviz/carto.rviz" />
+</launch>

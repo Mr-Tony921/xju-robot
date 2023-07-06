@@ -6,7 +6,7 @@
 
 namespace xju::explore {
 FrontierSearch::FrontierSearch() : map_update_(false) {
-    map_sub_ = node_.subscribe("map", 1, &FrontierSearch::map_cb, this);
+    map_sub_ = node_.subscribe("carto_map", 1, &FrontierSearch::map_cb, this);
     map_pub_ = node_.advertise<nav_msgs::OccupancyGrid>("explore_map", 1, true);
 }
 
