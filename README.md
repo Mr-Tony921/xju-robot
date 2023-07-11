@@ -6,6 +6,9 @@ Thanks for watching and please kindly leave a STAR for me.
 Deploy<br>
 Video link:【小橘工程部署】 https://www.bilibili.com/video/BV19o4y1W7jC/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
+Class 28: Cartographer.<br>
+Video link:【小橘仿真[28] cartographer rotatemap】 https://www.bilibili.com/video/BV1fm4y1J7UF/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
+
 Class 27: Video recorder.<br>
 Video link:【小橘仿真[27] 行车记录仪】 https://www.bilibili.com/video/BV1Wu4y1o7dT/?share_source=copy_web&vd_source=88e435df3261250165e3c0b331a63754
 
