@@ -43,7 +43,7 @@ Visualization Manager:
       Cell Size: 1
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
         Line Width: 0.029999999329447746
         Value: Lines
@@ -56,7 +56,7 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 100
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -67,78 +67,6 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        camera_front_base:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_front_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        front_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        laser_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        pic_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        top_laser_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ultra_left_back_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ultra_left_front_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ultra_right_back_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ultra_right_front_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        universal_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -208,7 +136,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /map
+      Topic: /carto_map
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -379,17 +307,54 @@ Visualization Manager:
             All: true
             All Submap Pose Markers: true
             Trajectory 0:
-              0.260: true
-              1.260: true
-              10.45: true
-              2.260: true
-              3.260: true
-              4.260: true
-              5.260: true
-              6.260: true
-              7.260: true
-              8.260: true
-              9.175: true
+              0.70: true
+              1.70: true
+              10.70: true
+              11.70: true
+              12.70: true
+              13.70: true
+              14.70: true
+              15.70: true
+              16.70: true
+              17.70: true
+              18.70: true
+              19.70: true
+              2.70: true
+              20.70: true
+              21.70: true
+              22.70: true
+              23.70: true
+              24.70: true
+              25.70: true
+              26.70: true
+              27.70: true
+              28.70: true
+              29.70: true
+              3.70: true
+              30.70: true
+              31.70: true
+              32.70: true
+              33.70: true
+              34.70: true
+              35.70: true
+              36.70: true
+              37.70: true
+              38.70: true
+              39.70: true
+              4.70: true
+              40.70: true
+              41.70: true
+              42.70: true
+              43.70: true
+              44.70: true
+              45.70: true
+              46.64: true
+              47.29: true
+              5.70: true
+              6.70: true
+              7.70: true
+              8.70: true
+              9.70: true
               Submap Pose Markers: true
               Value: true
           Topic: /submap_list
@@ -429,7 +394,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: carto_map
     Frame Rate: 30
   Name: root
   Tools:
@@ -448,7 +413,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -3.140801429748535
+      Angle: -1.5658009052276611
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -458,10 +423,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 15.309518814086914
+      Scale: 16.899749755859375
       Target Frame: <Fixed Frame>
-      X: -8.535929679870605
-      Y: -16.325132369995117
+      X: 9.435396194458008
+      Y: -3.1844470500946045
     Saved: ~
 Window Geometry:
   Displays:
@@ -481,5 +446,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1279
-  X: 938
-  Y: 1467
+  X: 641
+  Y: 27

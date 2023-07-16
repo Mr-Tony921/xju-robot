@@ -43,16 +43,16 @@ options = {
 }
 
 MAP_BUILDER.use_trajectory_builder_2d = true
-POSE_GRAPH.optimize_every_n_nodes = 180
+POSE_GRAPH.optimize_every_n_nodes = 70
 TRAJECTORY_BUILDER_2D.min_range = 0.1
 TRAJECTORY_BUILDER_2D.max_range = 25
 TRAJECTORY_BUILDER_2D.missing_data_ray_length = 1
 TRAJECTORY_BUILDER_2D.use_imu_data = false
 TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 3
-TRAJECTORY_BUILDER_2D.submaps.num_range_data = 130
+TRAJECTORY_BUILDER_2D.submaps.num_range_data = 35
 TRAJECTORY_BUILDER_2D.adaptive_voxel_filter.max_length = 0.1
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.ceres_solver_options.max_num_iterations = 15
-TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 20
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 5
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 5
 TRAJECTORY_BUILDER_2D.motion_filter.max_angle_radians = math.rad(0.2)
 TRAJECTORY_BUILDER_2D.motion_filter.max_distance_meters = 0.1
