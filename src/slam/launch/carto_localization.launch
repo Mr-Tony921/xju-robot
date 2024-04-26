@@ -1,0 +1,27 @@
+<launch>
+    <arg name="map" default="$(find xju_slam)/map/carto_map.yaml"/>
+    <arg name="load_state_filename" default="$(find xju_slam)/map/carto_map.pbstream"/>
+    <arg name="rviz" default="true"/>
+
+    <param name="/configuration_directory" value="$(find xju_slam)/param" type="string"/>
+    <param name="/configuration_basename" value="xju_carto_localization_2d.lua" type="string"/>
+
+    <node pkg="xju_slam" type="xju_relocation" name="xju_relocation" output="screen"/>
+
+    <node pkg="map_server" type="map_server" name="map_server" args="$(arg map)"/>
+
+    <node name="cartographer_node" pkg="cartographer_ros" type="cartographer_node"
+          args="-configuration_directory $(find xju_slam)/param
+                -configuration_basename xju_carto_localization_2d.lua
+                -load_state_filename $(arg load_state_filename)
+                -load_frozen_state false">
+        <remap from="echoes" to="horizontal_laser_2d" />
+    </node>
+
+    <node pkg="tf" type="static_transform_publisher" name="carto_map_to_map"
+          args="0 0 0 0 0 0 /carto_map /map 1000" />
+
+    <group if="$(arg rviz)">
+        <node pkg="rviz" type="rviz" name="rviz" args="-d $(find xju_slam)/rviz/slam.rviz" />
+    </group>
+</launch>

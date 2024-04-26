@@ -43,7 +43,7 @@
     </collision>
   </link>
 
-  <!-- Picture -->
+  <!-- Picture 
   <link
     name="pic_link">
     <visual>
@@ -66,7 +66,7 @@
       link="base_link" />
     <child
       link="pic_link" />
-  </joint>
+  </joint>-->
 
   <!-- Wheel -->
   <link

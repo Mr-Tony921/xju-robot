@@ -11,7 +11,7 @@
     </include>-->
 
     <!-- amcl3d -->
-    <include file="$(find xju_slam)/launch/localization.launch">
+    <include file="$(find xju_slam)/launch/carto_localization.launch">
         <arg name="rviz" value="$(arg localization_rviz)" />
     </include>
 

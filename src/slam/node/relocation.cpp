@@ -10,6 +10,9 @@
 #include "sensor_msgs/LaserScan.h"
 #include "tf2/utils.h"
 
+#include "cartographer_ros_msgs/FinishTrajectory.h"
+#include "cartographer_ros_msgs/StartTrajectory.h"
+
 namespace xju::slam {
 #define degree2rad (M_PI / 180.0)
 class XjuRelo {
@@ -35,6 +38,9 @@ private:
   ros::Subscriber map_sub_;
   ros::Subscriber laser_sub_;
 
+  ros::ServiceClient finish_traj_srv_;
+  ros::ServiceClient start_traj_srv_;
+
   nav_msgs::OccupancyGrid map_{};
   sensor_msgs::LaserScan laser_{};
 
@@ -42,6 +48,7 @@ private:
 
   std::atomic_bool on_going_{false};
   std::atomic_bool got_laser_info_{false};
+  std::atomic_bool carto_{true};
 };
 
 XjuRelo::XjuRelo() {
@@ -51,9 +58,17 @@ XjuRelo::XjuRelo() {
   initial_pose_sub_ = nh.subscribe("/initialpose_ori", 1, &XjuRelo::initialPoseReceived, this);
   map_sub_ = nh.subscribe("/map", 1, &XjuRelo::mapReceived, this);
   laser_sub_ = nh.subscribe("/scan", 1, &XjuRelo::laserReceived, this);
+
+  // carto_ = ros::service::waitForService("/finish_trajectory", 5) && ros::service::waitForService("/start_trajectory", 5);
+  if (carto_) {
+    ROS_INFO("Use carto pure localization!");
+    finish_traj_srv_ = nh.serviceClient<cartographer_ros_msgs::FinishTrajectory>("/finish_trajectory");
+    start_traj_srv_ = nh.serviceClient<cartographer_ros_msgs::StartTrajectory>("/start_trajectory");
+  }
 }
 
 void XjuRelo::initialPoseReceived(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msg) {
+  static int32_t traj_id = 0;
   on_going_ = true;
   auto best_pose = *msg;
   ROS_INFO("Receive original initial pose for amcl node [%.3f, %.3f, %.3f]",
@@ -64,6 +79,23 @@ void XjuRelo::initialPoseReceived(const geometry_msgs::PoseWithCovarianceStamped
            best_pose.pose.pose.position.x, best_pose.pose.pose.position.y, tf2::getYaw(best_pose.pose.pose.orientation),
            score, (ros::Time::now() - start_time).toSec());
   initial_pose_pub_.publish(best_pose);
+  if (carto_) {
+    cartographer_ros_msgs::FinishTrajectory finish_r{};
+    finish_r.request.trajectory_id = ++traj_id;
+    if (finish_traj_srv_.call(finish_r)) {
+      ROS_INFO_STREAM("Call finish_trajectory success! Response is " << finish_r.response.status);
+    }
+    cartographer_ros_msgs::StartTrajectory start_r{};
+    ros::param::get("/configuration_directory", start_r.request.configuration_directory);
+    ros::param::get("/configuration_basename", start_r.request.configuration_basename);
+    start_r.request.use_initial_pose = true;
+    start_r.request.initial_pose = best_pose.pose.pose;
+    start_r.request.relative_to_trajectory_id = 0;
+    if (start_traj_srv_.call(start_r)) {
+      ROS_INFO_STREAM("Call start_trajectory success! Response is " << start_r.response.status << 
+                      ", trajectory_id is " << start_r.response.trajectory_id);
+    }
+  }
   on_going_ = false;
 }
 
@@ -99,7 +131,7 @@ auto XjuRelo::rangeRelocate(geometry_msgs::PoseWithCovarianceStamped& best_pose,
     auto i = std::floor((x - map_.info.origin.position.x) / map_.info.resolution + 0.5);
     auto j = std::floor((y - map_.info.origin.position.y) / map_.info.resolution + 0.5);
     auto idx = i + j * map_.info.width;
-    return map_.data[idx] == 100;
+    return map_.data[idx] > 50;
   };
   auto calcuScore = [&](double x, double y, double cos, double sin) {
     const double laser2base = 0.29;

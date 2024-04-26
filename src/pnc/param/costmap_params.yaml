@@ -23,6 +23,7 @@ global_costmap:
   static_layer:
     map_topic: /map
     track_unknown_space: false
+    lethal_cost_threshold: 50
 
   keep_out_layer:
     enabled: true

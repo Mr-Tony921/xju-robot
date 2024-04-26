@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 		tf
 		tf2
 		tf2_ros
+		cartographer_ros_msgs
 		)
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -22,6 +23,7 @@ catkin_package(CATKIN_DEPENDS
 		sensor_msgs
 		tf2
 		tf2_ros
+		cartographer_ros_msgs
 		)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
